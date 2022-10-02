@@ -1,6 +1,6 @@
 ﻿namespace Utilities.Common.Data.Extensions
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         public static bool TryParseBoolean(this string data, ref bool result)
         {
