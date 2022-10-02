@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities.Common.Data;
 using Utilities.Common.Sql.Abstractions;
 using Utilities.PSql.Abstractions;
 
@@ -189,7 +190,21 @@ namespace Utilities.PSql
 
         public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            throw new NotImplementedException();
+            using var connection = new NpgsqlConnection(connectionString);
+
+            using var command = new NpgsqlCommand(commandText)
+            {
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = commandTimeout
+            };
+
+            if (commandParameters is not null)
+            {
+                command.Parameters.AddRange(commandParameters.ToArray());
+            }
+
+            return CastScalar<T>(command.ExecuteScalar());
         }
 
         public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
@@ -209,7 +224,22 @@ namespace Utilities.PSql
 
         public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            throw new NotImplementedException();
+            var tran = GetSqlClientTransaction(transaction);
+
+            using var command = new NpgsqlCommand(commandText)
+            {
+                Connection = tran.Connection,
+                CommandType = commandType,
+                CommandTimeout = commandTimeout,
+                Transaction = tran
+            };
+
+            if (commandParameters is not null)
+            {
+                command.Parameters.AddRange(commandParameters.ToArray());
+            }
+
+            return CastScalar<T>(command.ExecuteScalar());
         }
         #endregion
 
@@ -379,25 +409,25 @@ namespace Utilities.PSql
             return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
         }
 
-        public Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            //using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new NpgsqlConnection(connectionString);
 
-            //using var command = new NpgsqlCommand(commandText) 
-            //{
-            //    Connection = connection,
-            //    CommandType = commandType,
-            //    CommandTimeout = commandTimeout
-            //};
+            using var command = new NpgsqlCommand(commandText)
+            {
+                Connection = connection,
+                CommandType = commandType,
+                CommandTimeout = commandTimeout
+            };
 
-            //if (commandParameters is not null)
-            //{
-            //    command.Parameters.AddRange(commandParameters.ToArray());
-            //}
+            if (commandParameters is not null)
+            {
+                command.Parameters.AddRange(commandParameters.ToArray());
+            }
 
-            //await connection.OpenAsync();
-            //return CastScalar<T>(await command.ExecuteScalarAsync());
-            throw new NotImplementedException();
+            await connection.OpenAsync();
+
+            return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
         public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
@@ -415,15 +445,30 @@ namespace Utilities.PSql
             return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
         }
 
-        public Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            throw new NotImplementedException();
+            var tran = GetSqlClientTransaction(transaction);
+
+            using var command = new NpgsqlCommand(commandText)
+            {
+                Connection = tran.Connection,
+                CommandType = commandType,
+                CommandTimeout = commandTimeout,
+                Transaction = tran
+            };
+
+            if (commandParameters is not null)
+            {
+                command.Parameters.AddRange(commandParameters.ToArray());
+            }
+
+            return CastScalar<T>(await command.ExecuteScalarAsync());
         }
         #endregion
 
         #endregion
 
-        private NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction<NpgsqlTransaction> sqlTransaction)
+        private static NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction<NpgsqlTransaction> sqlTransaction)
         {
             ISqlClientTransaction tran = sqlTransaction as ISqlClientTransaction;
 
@@ -433,6 +478,12 @@ namespace Utilities.PSql
             }
 
             return tran.SqlClientTransaction;
+        }
+
+        private static T CastScalar<T>(object obj) 
+            where T : struct
+        {
+            return (obj is null ? default : Conversions.Cast<T>(obj));
         }
     }
 }
