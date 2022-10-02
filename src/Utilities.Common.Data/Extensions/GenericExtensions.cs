@@ -15,10 +15,5 @@ namespace Utilities.Common.Data.Extensions
                 _ => default
             };
         }
-
-        public static bool IsNullOrDefault<T>(this T value)
-        {
-            return value is null || value.Equals(default(T));
-        }
     }
 }
