@@ -483,7 +483,7 @@ namespace Utilities.PSql
         private static T CastScalar<T>(object obj) 
             where T : struct
         {
-            return (obj is null ? default : Conversions.Cast<T>(obj));
+            return (obj is null ? default : Common.Data.Convert.Cast<T>(obj));
         }
     }
 }

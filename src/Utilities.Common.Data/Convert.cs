@@ -4,7 +4,7 @@ using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {
-    public static partial class Conversions
+    public static partial class Convert
     {
         private static Dictionary<Type, Func<object, object>> _defaultValueHandlerDictionary;
 
@@ -29,7 +29,7 @@ namespace Utilities.Common.Data
 
             return (resultValue is T || destinationType.IsEnum)
                 ? (T)resultValue
-                : (T)Convert.ChangeType(resultValue, destinationType);
+                : (T)System.Convert.ChangeType(resultValue, destinationType);
         }
 
         private static void InitializeHandlers()

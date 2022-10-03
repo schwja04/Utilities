@@ -4,13 +4,13 @@ using Xunit;
 
 namespace Utilities.Common.Data.UnitTests
 {
-    public class ConversionShould
+    public class ConvertShould
     {
         [Fact]
         public void Cast_WhenObjectIsNull_Throw_ArgumentNullException()
         {
             // Arrange
-            var action = () => Conversions.Cast<int>(null);
+            var action = () => Convert.Cast<int>(null);
 
             // Act && Assert
             action.Should().Throw<ArgumentNullException>();
@@ -30,7 +30,7 @@ namespace Utilities.Common.Data.UnitTests
         public void Cast_ToBoolean_Theories(object obj, bool expected)
         {
             // Arrange && Act && Assert
-            Conversions.Cast<bool>(obj).Should().Be(expected);
+            Convert.Cast<bool>(obj).Should().Be(expected);
         }
 
         [Theory]
@@ -43,7 +43,7 @@ namespace Utilities.Common.Data.UnitTests
             string expected = orig.Trim();
 
             // Act
-            string actual = Conversions.Cast<string>(orig);
+            string actual = Convert.Cast<string>(orig);
 
             // Assert
             string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase)

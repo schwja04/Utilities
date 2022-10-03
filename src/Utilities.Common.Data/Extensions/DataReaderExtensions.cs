@@ -14,7 +14,7 @@ namespace Utilities.Common.Data.Extensions
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return GenericExtensions.GetDefaultValue<T>();
 
-            return Conversions.Cast<T>(value);
+            return Convert.Cast<T>(value);
         }
 
         public static T To<T>(this IDataReader reader, string name, T defaultValue)
@@ -25,7 +25,7 @@ namespace Utilities.Common.Data.Extensions
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
-            return Conversions.Cast<T>(value);
+            return Convert.Cast<T>(value);
         }
 
         public static T? ToNullable<T>(this IDataReader reader, string name) where T : struct
@@ -42,7 +42,7 @@ namespace Utilities.Common.Data.Extensions
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
-            return Conversions.Cast<T>(value);
+            return Convert.Cast<T>(value);
         }
 
         public static bool ColumnExists(this IDataReader reader, string columnName)
