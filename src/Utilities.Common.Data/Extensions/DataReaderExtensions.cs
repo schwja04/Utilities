@@ -33,19 +33,19 @@ namespace Utilities.Common.Data.Extensions
             return ToNullable<T>(reader, name, null);
         }
 
-        public static T? ToNullable<T>(this IDataReader reader, string name, T? defaultValue) 
+        public static T? ToNullable<T>(this IDataReader reader, string name, T? defaultValue)
             where T : struct
         {
             if (!ColumnExists(reader, name)) return defaultValue;
 
             object value = reader[name];
 
-            if (value == null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
             return Conversions.Cast<T>(value);
         }
 
-        private static bool ColumnExists(IDataReader reader, string columnName)
+        public static bool ColumnExists(this IDataReader reader, string columnName)
         {
             for (int i = 0; i < reader.FieldCount; ++i)
             {
