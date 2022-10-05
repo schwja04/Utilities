@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using FluentAssertions;
-using FluentAssertions.Execution;
-using Newtonsoft.Json.Linq;
 using Utilities.Common.Data.Extensions;
 using Utilities.Common.Sql.Abstractions;
 using Xunit;
