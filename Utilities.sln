@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Sqlite", "src\Uti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.Sqlite.UnitTests", "tests\Utilities.Sqlite.UnitTests\Utilities.Sqlite.UnitTests.csproj", "{F5F0EB90-16F9-4923-B20E-33CBA1F29866}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utilities.MySql", "src\Utilities.MySql\Utilities.MySql.csproj", "{B2646BBE-2DDA-4A5F-A585-30A4BC125E85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +79,10 @@ Global
 		{F5F0EB90-16F9-4923-B20E-33CBA1F29866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5F0EB90-16F9-4923-B20E-33CBA1F29866}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5F0EB90-16F9-4923-B20E-33CBA1F29866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2646BBE-2DDA-4A5F-A585-30A4BC125E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2646BBE-2DDA-4A5F-A585-30A4BC125E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2646BBE-2DDA-4A5F-A585-30A4BC125E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2646BBE-2DDA-4A5F-A585-30A4BC125E85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
