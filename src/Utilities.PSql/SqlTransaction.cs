@@ -34,6 +34,7 @@ namespace Utilities.PSql
             }
 
             _sqlConnection = new NpgsqlConnection(_connectionString);
+            _sqlConnection.Open();
             _sqlTransaction = _sqlConnection.BeginTransaction();
         }
 
@@ -76,7 +77,7 @@ namespace Utilities.PSql
         }
 
         #region IDisposable Support
-        private bool _isDisposed;
+        private bool _isDisposed = false;
 
         public void Dispose()
         {

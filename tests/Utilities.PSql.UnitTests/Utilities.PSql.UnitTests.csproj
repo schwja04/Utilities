@@ -20,6 +20,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="AutoFixture" Version="4.17.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="AutoFixture" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Utilities.PSql\Utilities.PSql.csproj" />
+  </ItemGroup>
 </Project>
