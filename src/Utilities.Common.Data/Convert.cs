@@ -1,14 +1,38 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Collections.Concurrent;
 using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {
-    public static partial class Convert
+    public static class Convert
     {
-        private static Dictionary<Type, Func<object, object>> _defaultValueHandlerDictionary;
+        private static DefaultValueHandlerDictionary _defaultValueHandlers;
 
-        static partial void UpdateDefaultValueHandlers(Dictionary<Type, Func<object, object>> handlerDictionary);
+        public static void AddOrUpdateHandlers(IEnumerable<KeyValuePair<Type, Func<object, object>>> handlers)
+        {
+            foreach (KeyValuePair<Type, Func<object, object>> handler in handlers)
+            {
+                AddOrUpdateHandler(handler.Key, handler.Value);
+            }
+        }
+
+        public static void AddOrUpdateHandler(Type type, Func<object, object> handler)
+        {
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (handler is null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
+            InitializeHandlers();
+
+            _defaultValueHandlers.AddOrUpdate(type, handler);
+        }
 
         public static T Cast<T>(object value)
         {
@@ -22,7 +46,7 @@ namespace Utilities.Common.Data
             Type destinationType = typeof(T);
             object resultValue = value;
 
-            if (_defaultValueHandlerDictionary.TryGetValue(destinationType, out Func<object, object> handler))
+            if (_defaultValueHandlers.TryGetValue(destinationType, out Func<object, object> handler))
             {
                 resultValue = handler.Invoke(resultValue);
             }
@@ -34,27 +58,7 @@ namespace Utilities.Common.Data
 
         private static void InitializeHandlers()
         {
-            if (_defaultValueHandlerDictionary is null)
-            {
-                _defaultValueHandlerDictionary = new Dictionary<Type, Func<object, object>>(2)
-                {
-                    [typeof(bool)] = HandleBoolean,
-                    [typeof(string)] = HandleString
-                };
-                UpdateDefaultValueHandlers(_defaultValueHandlerDictionary);
-            }
-
-            static object HandleBoolean(object value)
-            {
-                bool boolValue = false;
-                return StringExtensions.TryParseBoolean(value.ToString(), ref boolValue)
-                    && boolValue;
-            }
-
-            static object HandleString(object value)
-            {
-                return value.ToString().Trim();
-            }
+            _defaultValueHandlers ??= new();
         }
     }
 }
