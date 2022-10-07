@@ -17,9 +17,11 @@ namespace Utilities.Common.Data
                 [typeof(bool)] = HandleBoolean,
                 [typeof(string)] = HandleString
             };
+
+            DefaultValueHandlers = new(_typeHandlers);
         }
 
-        public ReadOnlyDictionary<Type, Func<object, object>> DefaultValueHandlers => new(_typeHandlers);
+        public ReadOnlyDictionary<Type, Func<object, object>> DefaultValueHandlers { get; }
 
         public void AddOrUpdate(IEnumerable<KeyValuePair<Type, Func<object, object>>> handlers)
         {
@@ -44,17 +46,8 @@ namespace Utilities.Common.Data
             _typeHandlers.AddOrUpdate(type, handler, (k, v) => handler);
         }
 
-        public bool TryGetValue(Type type, out Func<object, object> handler)
-        {
-            if (_typeHandlers.TryGetValue(type, out Func<object, object> innerHandler))
-            {
-                handler = innerHandler;
-                return true;
-            }
-
-            handler = null;
-            return false;
-        }
+        public bool TryGetValue(Type type, out Func<object, object> handler) =>
+            _typeHandlers.TryGetValue(type, out handler);
 
         private static object HandleBoolean(object value)
         {
