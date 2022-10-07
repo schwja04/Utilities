@@ -1,11 +1,101 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xunit;
 
 namespace Utilities.Common.Data.UnitTests
 {
     public class ConvertShould
     {
+        private readonly IFixture _fixture;
+
+        public ConvertShould()
+        {
+            _fixture = new Fixture();
+        }
+
+        // TODO: This fails because `Convert` holds state and we are not guaranteed run order of unit tests.
+        // I would like to find an alternate implementation for this.
+        //[Fact]
+        //public void DefaultValueHandlers_ShouldBeNullBeforeInitialization()
+        //{
+        //    // Arrange && Act
+        //    var actual = Convert.DefaultValueHandlers;
+
+        //    // Assert
+        //    actual.Should().BeNull();
+        //}
+
+        [Fact]
+        public void AddOrUpdateHandler_ShouldThrowArgumentNullException_WhenTypeIsNull()
+        {
+            // Arrange
+            Type type = null;
+            var handler = _fixture.Create<Func<object, object>>();
+
+            // Act
+            var act = () => Convert.AddOrUpdateHandler(type, handler);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName(nameof(type));
+        }
+
+        [Fact]
+        public void AddOrUpdateHandler_ShouldThrowArgumentNullException_WhenHandlerIsNull()
+        {
+            // Arrange
+            var type = _fixture.Create<Type>();
+            Func<object, object> handler = null;
+
+            // Act
+            var act = () => Convert.AddOrUpdateHandler(type, handler);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName(nameof(handler));
+        }
+
+        [Fact]
+        public void AddOrUpdateHandlers_ShouldThrowArgumentNullException_WhenTypeIsNull()
+        {
+            // Arrange
+            Type type = null;
+            var handler = _fixture.Create<Func<object, object>>();
+            var typeHandlerList = new List<KeyValuePair<Type, Func<object, object>>>(1)
+            {
+                new(type, handler)
+            };
+
+            // Act
+            var act = () => Convert.AddOrUpdateHandlers(typeHandlerList);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName(nameof(type));
+        }
+
+        [Fact]
+        public void AddOrUpdateHandlers_ShouldThrowArgumentNullException_WhenHandlerIsNull()
+        {
+            // Arrange
+            var type = _fixture.Create<Type>();
+            Func<object, object> handler = null;
+            var typeHandlerList = new List<KeyValuePair<Type, Func<object, object>>>(1)
+            {
+                new(type, handler)
+            };
+
+            // Act
+            var act = () => Convert.AddOrUpdateHandlers(typeHandlerList);
+
+            // Assert
+            act.Should().Throw<ArgumentNullException>()
+                .WithParameterName(nameof(handler));
+        }
+
         [Fact]
         public void Cast_WhenObjectIsNull_Throw_ArgumentNullException()
         {
