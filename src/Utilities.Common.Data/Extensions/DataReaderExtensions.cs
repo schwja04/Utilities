@@ -6,39 +6,39 @@ namespace Utilities.Common.Data.Extensions
 {
     public static class DataReaderExtensions
     {
-        public static T To<T>(this IDataReader reader, string name)
+        public static T To<T>(this IDataReader reader, string columnName)
         {
-            if (!ColumnExists(reader, name)) return GenericExtensions.GetDefaultValue<T>();
+            if (!ColumnExists(reader, columnName)) return GenericExtensions.GetDefaultValue<T>();
 
-            object value = reader[name];
+            object value = reader[columnName];
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return GenericExtensions.GetDefaultValue<T>();
 
             return Convert.Cast<T>(value);
         }
 
-        public static T To<T>(this IDataReader reader, string name, T defaultValue)
+        public static T To<T>(this IDataReader reader, string columnName, T defaultValue)
         {
-            if (!ColumnExists(reader, name)) return defaultValue;
+            if (!ColumnExists(reader, columnName)) return defaultValue;
 
-            object value = reader[name];
+            object value = reader[columnName];
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
             return Convert.Cast<T>(value);
         }
 
-        public static T? ToNullable<T>(this IDataReader reader, string name) where T : struct
+        public static T? ToNullable<T>(this IDataReader reader, string columnName) where T : struct
         {
-            return ToNullable<T>(reader, name, null);
+            return ToNullable<T>(reader, columnName, null);
         }
 
-        public static T? ToNullable<T>(this IDataReader reader, string name, T? defaultValue)
+        public static T? ToNullable<T>(this IDataReader reader, string columnName, T? defaultValue)
             where T : struct
         {
-            if (!ColumnExists(reader, name)) return defaultValue;
+            if (!ColumnExists(reader, columnName)) return defaultValue;
 
-            object value = reader[name];
+            object value = reader[columnName];
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
