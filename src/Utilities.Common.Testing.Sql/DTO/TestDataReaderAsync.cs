@@ -2,7 +2,7 @@
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using Utilities.Common.Sql.Abstractions;
+using Utilities.Common.Data.Abstractions;
 
 namespace Utilities.Common.Testing.Sql.DTO
 {

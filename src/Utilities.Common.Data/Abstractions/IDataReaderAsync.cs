@@ -1,8 +1,8 @@
 ﻿using System.Data;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace Utilities.Common.Sql.Abstractions
+namespace Utilities.Common.Data.Abstractions
 {
     public interface IDataReaderAsync : IDataReader
     {

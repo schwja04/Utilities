@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
-using Utilities.Common.Sql.Abstractions;
+using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Testing.Sql.DTO;
 
 namespace Utilities.Common.Testing.Sql

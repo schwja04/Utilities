@@ -8,5 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Utilities.Common.Sql\Utilities.Common.Sql.csproj" />
+    <ProjectReference Include="..\Utilities.Common.Data\Utilities.Common.Data.csproj" />
   </ItemGroup>
 </Project>

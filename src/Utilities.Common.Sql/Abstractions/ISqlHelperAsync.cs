@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
+using Utilities.Common.Data.Abstractions;
 
 namespace Utilities.Common.Sql.Abstractions
 {
