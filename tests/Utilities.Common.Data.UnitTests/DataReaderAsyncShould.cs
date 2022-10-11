@@ -576,6 +576,260 @@ namespace Utilities.Common.Data.UnitTests
             actual.Should().Be(expected);
         }
 
+        [Theory]
+        [InlineData(1, true)]
+        [InlineData(1, false)]
+        [InlineData(0, false)]
+        public void ColumnExists_Theories(int fieldCount, bool isPresent)
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            
+            if (fieldCount > 0)
+            {
+                _mockDataReader.Setup(x => x.GetName(It.IsAny<int>()))
+                    .Returns(() =>
+                    {
+                        return isPresent ? colName : _fixture.Create<string>();
+                    });
+            }
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(fieldCount);
+
+            // Act
+            var actual = _dataReaderAsync.ColumnExists(colName);
+
+            // Assert
+            actual.Should().Be(isPresent);
+
+            _mockDataReader.Verify(x => x.FieldCount, Times.AtLeastOnce());
+
+            if (fieldCount == 0)
+            {
+                _mockDataReader.Verify(x => x.GetName(It.IsAny<int>()), Times.Never());
+            }
+            else
+            {
+                _mockDataReader.Verify(x => x.GetName(It.IsAny<int>()), Times.AtLeastOnce());
+            }
+        }
+
+        [Fact]
+        public void ToWithoutDefault_ShouldReturnDefault_WhenColumnDoesNotExist()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(0);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName);
+
+            // Assert
+            actual.Should().Be(0);
+
+            _mockDataReader.Verify(x => x[colName], Times.Never());
+        }
+
+        [Fact]
+        public void ToWithoutDefault_ShouldReturnDefault_WhenColumnIsNull()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(null);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName);
+
+            // Assert
+            actual.Should().Be(0);
+        }
+
+        [Fact]
+        public void ToWithoutDefault_ShouldReturnInt()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            var expected = _fixture.Create<int>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(expected);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ToWithDefault_ShouldReturnDefault_WhenColumnDoesNotExist()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(0);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(-1);
+
+            _mockDataReader.Verify(x => x[colName], Times.Never());
+        }
+
+        [Fact]
+        public void ToWithDefault_ShouldReturnDefault_WhenColumnIsNull()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(null);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(-1);
+        }
+
+        [Fact]
+        public void ToWithDefault_ShouldReturnInt()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            var expected = _fixture.Create<int>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(expected);
+
+            // Act
+            var actual = _dataReaderAsync.To<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ToNullableWithoutDefault_ShouldReturnDefault_WhenColumnDoesNotExist()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(0);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName);
+
+            // Assert
+            actual.Should().BeNull();
+
+            _mockDataReader.Verify(x => x[colName], Times.Never());
+        }
+
+        [Fact]
+        public void ToNullableWithoutDefault_ShouldReturnDefault_WhenColumnIsNull()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(null);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName);
+
+            // Assert
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void ToNullableWithoutDefault_ShouldReturnInt()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            var expected = _fixture.Create<int>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(expected);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void ToNullableWithDefault_ShouldReturnDefault_WhenColumnDoesNotExist()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(0);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(-1);
+
+            _mockDataReader.Verify(x => x[colName], Times.Never());
+        }
+
+        [Fact]
+        public void ToNullableWithDefault_ShouldReturnDefault_WhenColumnIsNull()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(null);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(-1);
+        }
+
+        [Fact]
+        public void ToNullableWithDefault_ShouldReturnInt()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            var expected = _fixture.Create<int>();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.Setup(x => x[It.IsAny<string>()]).Returns(expected);
+
+            // Act
+            var actual = _dataReaderAsync.ToNullable<int>(colName, -1);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
         public class DummyReaderAsync : DataReaderAsync
         {
             public DummyReaderAsync(IDataReader dataReader)

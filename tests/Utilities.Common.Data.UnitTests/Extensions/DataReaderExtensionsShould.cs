@@ -128,4 +128,3 @@ namespace Utilities.Common.Data.UnitTests.Extensions
         }
     }
 }
-

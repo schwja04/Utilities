@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
+using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {
@@ -47,9 +48,9 @@ namespace Utilities.Common.Data
             return _reader.GetByte(i);
         }
 
-        public virtual long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
+        public virtual long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferOffset, int length)
         {
-            return _reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
+            return _reader.GetBytes(i, fieldOffset, buffer, bufferOffset, length);
         }
 
         public virtual char GetChar(int i)
@@ -57,9 +58,9 @@ namespace Utilities.Common.Data
             return _reader.GetChar(i);
         }
 
-        public virtual long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
+        public virtual long GetChars(int i, long fieldOffset, char[] buffer, int bufferOffset, int length)
         {
-            return _reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
+            return _reader.GetChars(i, fieldOffset, buffer, bufferOffset, length);
         }
 
         public virtual IDataReader GetData(int i)
@@ -170,6 +171,57 @@ namespace Utilities.Common.Data
 
         public abstract Task<bool> ReadAsync();
         public abstract Task<bool> ReadAsync(CancellationToken cancellationToken);
+
+        public virtual T To<T>(string columnName)
+        {
+            if (!ColumnExists(columnName)) return default;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return default;
+
+            return (T)value;
+        }
+
+        public virtual T To<T>(string columnName, T defaultValue)
+        {
+            if (!ColumnExists(columnName)) return defaultValue;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+
+            return (T)value;
+        }
+
+        public virtual T? ToNullable<T>(string columnName) where T : struct
+        {
+            return ToNullable<T>(columnName, null);
+        }
+
+        public virtual T? ToNullable<T>(string columnName, T? defaultValue)
+            where T : struct
+        {
+            if (!ColumnExists(columnName)) return defaultValue;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+
+            return (T)value;
+        }
+
+        public virtual bool ColumnExists(string columnName)
+        {
+            for (int i = 0; i < _reader.FieldCount; ++i)
+            {
+                if (string.Equals(_reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         #region IDisposable Support
 

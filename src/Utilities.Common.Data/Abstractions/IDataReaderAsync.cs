@@ -1,6 +1,8 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data.Abstractions
 {
@@ -14,5 +16,13 @@ namespace Utilities.Common.Data.Abstractions
 
         Task<bool> ReadAsync();
         Task<bool> ReadAsync(CancellationToken cancellationToken);
+
+        T To<T>(string columnName);
+        T To<T>(string columnName, T defaultValue);
+
+        T? ToNullable<T>(string columnName) where T : struct;
+        T? ToNullable<T>(string columnName, T? defaultValue) where T : struct;
+
+        bool ColumnExists(string columnName);
     }
 }

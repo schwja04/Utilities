@@ -253,7 +253,58 @@ namespace Utilities.Common.Testing.Sql.DTO
             }
         }
 
-        private Task<T> CreatedTaskWithCancellation<T>()
+        public T To<T>(string columnName)
+        {
+            if (!ColumnExists(columnName)) return (T)default;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return (T)default;
+
+            return (T)value;
+        }
+
+        public T To<T>(string columnName, T defaultValue)
+        {
+            if (!ColumnExists(columnName)) return defaultValue;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+
+            return (T)value;
+        }
+
+        public T? ToNullable<T>(string columnName) where T : struct
+        {
+            return ToNullable<T>(columnName, null);
+        }
+
+        public T? ToNullable<T>(string columnName, T? defaultValue)
+            where T : struct
+        {
+            if (!ColumnExists(columnName)) return defaultValue;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+
+            return (T)value;
+        }
+
+        public bool ColumnExists(string columnName)
+        {
+            for (int i = 0; i < _reader.FieldCount; ++i)
+            {
+                if (string.Equals(_reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static Task<T> CreatedTaskWithCancellation<T>()
         {
             var source = new TaskCompletionSource<T>();
             source.SetCanceled();
