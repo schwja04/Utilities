@@ -12,176 +12,79 @@ namespace Utilities.Common.Data
     {
         private readonly IDataReader _reader;
 
-        public DataReaderAsync(IDataReader reader)
-        {
-            if (reader is null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-            _reader = reader;
-        }
+        public DataReaderAsync(IDataReader reader) =>
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
 
-        public virtual object this[string name] { get { return _reader[name]; } }
+        #region Passthrough to IDataReader
+        public virtual object this[string name] => _reader[name];
 
-        public virtual object this[int i] { get { return _reader[i]; } }
+        public virtual object this[int i] => _reader[i];
 
-        public virtual int Depth { get { return _reader.Depth; } }
+        public virtual int Depth => _reader.Depth;
 
-        public virtual int FieldCount { get { return _reader.FieldCount; } }
+        public virtual int FieldCount => _reader.FieldCount;
 
-        public virtual bool IsClosed { get { return _reader.IsClosed; } }
+        public virtual bool IsClosed => _reader.IsClosed;
 
-        public virtual int RecordsAffected { get { return _reader.RecordsAffected; } }
+        public virtual int RecordsAffected => _reader.RecordsAffected;
 
-        public virtual void Close()
-        {
-            _reader.Close();
-        }
+        public virtual void Close() => _reader.Close();
 
-        public virtual bool GetBoolean(int i)
-        {
-            return _reader.GetBoolean(i);
-        }
+        public virtual bool GetBoolean(int i) => _reader.GetBoolean(i);
 
-        public virtual byte GetByte(int i)
-        {
-            return _reader.GetByte(i);
-        }
+        public virtual byte GetByte(int i) => _reader.GetByte(i);
 
-        public virtual long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferOffset, int length)
-        {
-            return _reader.GetBytes(i, fieldOffset, buffer, bufferOffset, length);
-        }
+        public virtual long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferOffset, int length) =>
+            _reader.GetBytes(i, fieldOffset, buffer, bufferOffset, length);
 
-        public virtual char GetChar(int i)
-        {
-            return _reader.GetChar(i);
-        }
+        public virtual char GetChar(int i) => _reader.GetChar(i);
 
-        public virtual long GetChars(int i, long fieldOffset, char[] buffer, int bufferOffset, int length)
-        {
-            return _reader.GetChars(i, fieldOffset, buffer, bufferOffset, length);
-        }
+        public virtual long GetChars(int i, long fieldOffset, char[] buffer, int bufferOffset, int length) =>
+            _reader.GetChars(i, fieldOffset, buffer, bufferOffset, length);
 
-        public virtual IDataReader GetData(int i)
-        {
-            return _reader.GetData(i);
-        }
+        public virtual IDataReader GetData(int i) => _reader.GetData(i);
 
-        public virtual string GetDataTypeName(int i)
-        {
-            return _reader.GetDataTypeName(i);
-        }
+        public virtual string GetDataTypeName(int i) => _reader.GetDataTypeName(i);
 
-        public virtual DateTime GetDateTime(int i)
-        {
-            return _reader.GetDateTime(i);
-        }
+        public virtual DateTime GetDateTime(int i) => _reader.GetDateTime(i);
 
-        public virtual decimal GetDecimal(int i)
-        {
-            return _reader.GetDecimal(i);
-        }
+        public virtual decimal GetDecimal(int i) => _reader.GetDecimal(i);
 
-        public virtual double GetDouble(int i)
-        {
-            return _reader.GetDouble(i);
-        }
+        public virtual double GetDouble(int i) => _reader.GetDouble(i);
 
-        public virtual Type GetFieldType(int i)
-        {
-            return _reader.GetFieldType(i);
-        }
+        public virtual Type GetFieldType(int i) => _reader.GetFieldType(i);
 
-        public virtual float GetFloat(int i)
-        {
-            return _reader.GetFloat(i);
-        }
+        public virtual float GetFloat(int i) => _reader.GetFloat(i);
 
-        public virtual Guid GetGuid(int i)
-        {
-            return _reader.GetGuid(i);
-        }
+        public virtual Guid GetGuid(int i) => _reader.GetGuid(i);
 
-        public virtual short GetInt16(int i)
-        {
-            return _reader.GetInt16(i);
-        }
+        public virtual short GetInt16(int i) => _reader.GetInt16(i);
 
-        public virtual int GetInt32(int i)
-        {
-            return _reader.GetInt32(i);
-        }
+        public virtual int GetInt32(int i) => _reader.GetInt32(i);
 
-        public virtual long GetInt64(int i)
-        {
-            return _reader.GetInt64(i);
-        }
+        public virtual long GetInt64(int i) => _reader.GetInt64(i);
 
-        public virtual string GetName(int i)
-        {
-            return _reader.GetName(i);
-        }
+        public virtual string GetName(int i) => _reader.GetName(i);
 
-        public virtual int GetOrdinal(string name)
-        {
-            return _reader.GetOrdinal(name);
-        }
+        public virtual int GetOrdinal(string name) => _reader.GetOrdinal(name);
 
-        public virtual DataTable GetSchemaTable()
-        {
-            return _reader.GetSchemaTable();
-        }
+        public virtual DataTable GetSchemaTable() => _reader.GetSchemaTable();
 
-        public virtual string GetString(int i)
-        {
-            return _reader.GetString(i);
-        }
+        public virtual string GetString(int i) => _reader.GetString(i);
 
-        public virtual object GetValue(int i)
-        {
-            return _reader.GetValue(i);
-        }
+        public virtual object GetValue(int i) => _reader.GetValue(i);
 
-        public virtual int GetValues(object[] values)
-        {
-            return _reader.GetValues(values);
-        }
+        public virtual int GetValues(object[] values) => _reader.GetValues(values);
 
-        public virtual bool IsDBNull(int i)
-        {
-            return _reader.IsDBNull(i);
-        }
+        public virtual bool IsDBNull(int i) => _reader.IsDBNull(i);
 
-        public virtual bool NextResult()
-        {
-            return _reader.NextResult();
-        }
+        public virtual bool NextResult() => _reader.NextResult();
 
-        public virtual bool Read()
-        {
-            return _reader.Read();
-        }
+        public virtual bool Read() => _reader.Read();
+        #endregion
 
-        public abstract Task<bool> IsDBNullAsync(int i);
-        public abstract Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken);
-
-        public abstract Task<bool> NextResultAsync();
-        public abstract Task<bool> NextResultAsync(CancellationToken cancellationToken);
-
-        public abstract Task<bool> ReadAsync();
-        public abstract Task<bool> ReadAsync(CancellationToken cancellationToken);
-
-        public virtual T To<T>(string columnName)
-        {
-            if (!ColumnExists(columnName)) return default;
-
-            object value = _reader[columnName];
-
-            if (value is null || ReferenceEquals(value, DBNull.Value)) return default;
-
-            return (T)value;
-        }
+        #region Field Extensions
+        public virtual T To<T>(string columnName) => To<T>(columnName, default);
 
         public virtual T To<T>(string columnName, T defaultValue)
         {
@@ -194,10 +97,8 @@ namespace Utilities.Common.Data
             return (T)value;
         }
 
-        public virtual T? ToNullable<T>(string columnName) where T : struct
-        {
-            return ToNullable<T>(columnName, null);
-        }
+        public virtual T? ToNullable<T>(string columnName) where T : struct =>
+            ToNullable<T>(columnName, null);
 
         public virtual T? ToNullable<T>(string columnName, T? defaultValue)
             where T : struct
@@ -222,9 +123,20 @@ namespace Utilities.Common.Data
             }
             return false;
         }
+        #endregion
+
+        #region abstract async extensions
+        public abstract Task<bool> IsDBNullAsync(int i);
+        public abstract Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken);
+
+        public abstract Task<bool> NextResultAsync();
+        public abstract Task<bool> NextResultAsync(CancellationToken cancellationToken);
+
+        public abstract Task<bool> ReadAsync();
+        public abstract Task<bool> ReadAsync(CancellationToken cancellationToken);
+        #endregion
 
         #region IDisposable Support
-
         private bool _isDisposed = false;
 
         protected virtual void Dispose(bool disposing)
@@ -239,12 +151,11 @@ namespace Utilities.Common.Data
             }
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
         #endregion
     }
 }

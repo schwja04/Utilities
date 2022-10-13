@@ -6,7 +6,7 @@ using Utilities.TSql.Abstractions;
 
 namespace Utilities.TSql
 {
-    public class SqlTransaction : ISqlClientTransaction, ISqlTransaction<Microsoft.Data.SqlClient.SqlTransaction>
+    public sealed class SqlTransaction : ISqlClientTransaction, ISqlTransaction<Microsoft.Data.SqlClient.SqlTransaction>
     {
         private readonly string _connectionString;
         private SqlConnection _sqlConnection;
@@ -93,7 +93,7 @@ namespace Utilities.TSql
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
 

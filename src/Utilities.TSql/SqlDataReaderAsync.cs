@@ -13,45 +13,28 @@ namespace Utilities.TSql
         public SqlDataReaderAsync(SqlDataReader reader)
             : base(reader)
         {
-            if (reader is null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-            _reader = reader;
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
 
-        public override async Task<bool> IsDBNullAsync(int i)
-        {
-            return await _reader.IsDBNullAsync(i);
-        }
+        public override async Task<bool> IsDBNullAsync(int i) =>
+            await _reader.IsDBNullAsync(i);
 
-        public override async Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken)
-        {
-            return await _reader.IsDBNullAsync(i, cancellationToken);
-        }
+        public override async Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken) =>
+            await _reader.IsDBNullAsync(i, cancellationToken);
 
-        public override async Task<bool> NextResultAsync()
-        {
-            return await _reader.NextResultAsync();
-        }
+        public override async Task<bool> NextResultAsync() =>
+            await _reader.NextResultAsync();
 
-        public override async Task<bool> NextResultAsync(CancellationToken cancellationToken)
-        {
-            return await _reader.NextResultAsync(cancellationToken);
-        }
+        public override async Task<bool> NextResultAsync(CancellationToken cancellationToken) =>
+            await _reader.NextResultAsync(cancellationToken);
 
-        public override async Task<bool> ReadAsync()
-        {
-            return await _reader.ReadAsync();
-        }
+        public override async Task<bool> ReadAsync() =>
+            await _reader.ReadAsync();
 
-        public override async Task<bool> ReadAsync(CancellationToken cancellationToken)
-        {
-            return await _reader.ReadAsync(cancellationToken);
-        }
+        public override async Task<bool> ReadAsync(CancellationToken cancellationToken) =>
+            await _reader.ReadAsync(cancellationToken);
 
         #region IDisposable Support
-
         private bool _isDisposed = false;
 
         protected override void Dispose(bool disposing)
@@ -64,14 +47,10 @@ namespace Utilities.TSql
                 }
                 _isDisposed = true;
             }
-        }
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            // Call base class implementation
+            base.Dispose(disposing);
         }
-
         #endregion
     }
 }

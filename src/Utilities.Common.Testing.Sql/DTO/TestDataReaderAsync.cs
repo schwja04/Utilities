@@ -2,210 +2,24 @@
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
 
 namespace Utilities.Common.Testing.Sql.DTO
 {
-    internal class TestDataReaderAsync : IDataReaderAsync
+    internal sealed class TestDataReaderAsync : DataReaderAsync
     {
-        private readonly IDataReader _reader;
-
         public TestDataReaderAsync(IDataReader reader)
+            : base(reader)
         {
-            _reader = reader;
         }
 
-
-        public int Depth
-        {
-            get
-            {
-                return _reader.Depth;
-            }
-        }
-
-        public int FieldCount
-        {
-            get
-            {
-                return _reader.FieldCount;
-            }
-        }
-
-        public bool IsClosed
-        {
-            get
-            {
-                return _reader.IsClosed;
-            }
-        }
-
-        public object this[string name]
-        {
-            get
-            {
-                return _reader[name];
-            }
-        }
-        public object this[int i]
-        {
-            get
-            {
-                return _reader[i];
-            }
-        }
-
-
-        public int RecordsAffected
-        {
-            get
-            {
-                return _reader.RecordsAffected;
-            }
-        }
-
-        public void Close()
-        {
-            _reader.Close();
-        }
-
-        public void Dispose()
-        {
-            _reader.Dispose();
-        }
-
-        public bool GetBoolean(int i)
-        {
-            return _reader.GetBoolean(i);
-        }
-
-        public byte GetByte(int i)
-        {
-            return _reader.GetByte(i);
-        }
-
-        public long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
-        {
-            return _reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
-        }
-
-        public char GetChar(int i)
-        {
-            return _reader.GetChar(i);
-        }
-
-        public long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
-        {
-            return _reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
-        }
-
-        public IDataReader GetData(int i)
-        {
-            return _reader.GetData(i);
-        }
-
-        public string GetDataTypeName(int i)
-        {
-            return _reader.GetDataTypeName(i);
-        }
-
-        public DateTime GetDateTime(int i)
-        {
-            return _reader.GetDateTime(i);
-        }
-
-
-        public decimal GetDecimal(int i)
-        {
-            return _reader.GetDecimal(i);
-        }
-
-        public double GetDouble(int i)
-        {
-            return _reader.GetDouble(i);
-        }
-
-        public Type GetFieldType(int i)
-        {
-            return _reader.GetFieldType(i);
-        }
-
-        public float GetFloat(int i)
-        {
-            return _reader.GetFloat(i);
-        }
-
-        public Guid GetGuid(int i)
-        {
-            return _reader.GetGuid(i);
-        }
-
-        public short GetInt16(int i)
-        {
-            return _reader.GetInt16(i);
-        }
-
-        public int GetInt32(int i)
-        {
-            return _reader.GetInt32(i);
-        }
-
-        public long GetInt64(int i)
-        {
-            return _reader.GetInt64(i);
-        }
-
-        public string GetName(int i)
-        {
-            return _reader.GetName(i);
-        }
-
-        public int GetOrdinal(string name)
-        {
-            return _reader.GetOrdinal(name);
-        }
-
-        public DataTable GetSchemaTable()
-        {
-            return _reader.GetSchemaTable();
-        }
-
-        public string GetString(int i)
-        {
-            return _reader.GetString(i);
-        }
-
-        public object GetValue(int i)
-        {
-            return _reader.GetValue(i);
-        }
-
-        public int GetValues(object[] values)
-        {
-            return _reader.GetValues(values);
-        }
-
-        public bool IsDBNull(int i)
-        {
-            return _reader.IsDBNull(i);
-        }
-
-        public bool NextResult()
-        {
-            return _reader.NextResult();
-        }
-
-        public bool Read()
-        {
-            return _reader.Read();
-        }
-
-        public Task<bool> IsDBNullAsync(int i)
+        public override Task<bool> IsDBNullAsync(int i)
         {
             return Task<bool>.FromResult(IsDBNull(i));
         }
 
-        public Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken)
+        public override Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken)
         {
 
             if (cancellationToken.IsCancellationRequested)
@@ -218,12 +32,12 @@ namespace Utilities.Common.Testing.Sql.DTO
             }
         }
 
-        public Task<bool> NextResultAsync()
+        public override Task<bool> NextResultAsync()
         {
             return Task<bool>.FromResult(NextResult());
         }
 
-        public Task<bool> NextResultAsync(CancellationToken cancellationToken)
+        public override Task<bool> NextResultAsync(CancellationToken cancellationToken)
         {
 
             if (cancellationToken.IsCancellationRequested)
@@ -236,12 +50,12 @@ namespace Utilities.Common.Testing.Sql.DTO
             }
         }
 
-        public Task<bool> ReadAsync()
+        public override Task<bool> ReadAsync()
         {
             return Task<bool>.FromResult(Read());
         }
 
-        public Task<bool> ReadAsync(CancellationToken cancellationToken)
+        public override Task<bool> ReadAsync(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -253,62 +67,19 @@ namespace Utilities.Common.Testing.Sql.DTO
             }
         }
 
-        public T To<T>(string columnName)
-        {
-            if (!ColumnExists(columnName)) return (T)default;
-
-            object value = _reader[columnName];
-
-            if (value is null || ReferenceEquals(value, DBNull.Value)) return (T)default;
-
-            return (T)value;
-        }
-
-        public T To<T>(string columnName, T defaultValue)
-        {
-            if (!ColumnExists(columnName)) return defaultValue;
-
-            object value = _reader[columnName];
-
-            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
-
-            return (T)value;
-        }
-
-        public T? ToNullable<T>(string columnName) where T : struct
-        {
-            return ToNullable<T>(columnName, null);
-        }
-
-        public T? ToNullable<T>(string columnName, T? defaultValue)
-            where T : struct
-        {
-            if (!ColumnExists(columnName)) return defaultValue;
-
-            object value = _reader[columnName];
-
-            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
-
-            return (T)value;
-        }
-
-        public bool ColumnExists(string columnName)
-        {
-            for (int i = 0; i < _reader.FieldCount; ++i)
-            {
-                if (string.Equals(_reader.GetName(i), columnName, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private static Task<T> CreatedTaskWithCancellation<T>()
         {
             var source = new TaskCompletionSource<T>();
             source.SetCanceled();
             return source.Task;
         }
+
+        #region IDisposable Support
+        protected override void Dispose(bool disposing)
+        {
+            // Call base class implementation
+            base.Dispose(disposing);
+        }
+        #endregion
     }
 }

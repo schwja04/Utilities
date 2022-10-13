@@ -9,7 +9,7 @@ using Utilities.Common.Sql.Abstractions;
 
 namespace Utilities.Sqlite
 {
-    public class SqlDataReaderAsync : DataReaderAsync
+    public sealed class SqlDataReaderAsync : DataReaderAsync
     {
         private readonly SqliteDataReader _reader;
 
@@ -54,7 +54,6 @@ namespace Utilities.Sqlite
         }
 
         #region IDisposable Support
-
         private bool _isDisposed = false;
 
         protected override void Dispose(bool disposing)
@@ -67,15 +66,10 @@ namespace Utilities.Sqlite
                 }
                 _isDisposed = true;
             }
+
+            // Call base class implementation
+            base.Dispose(disposing);
         }
-
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-
         #endregion
     }
 }
