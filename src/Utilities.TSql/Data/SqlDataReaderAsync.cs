@@ -1,18 +1,16 @@
-﻿using Npgsql;
-using System;
-using System.Data;
-using System.Threading.Tasks;
+﻿using Microsoft.Data.SqlClient;
 using System.Threading;
+using System.Threading.Tasks;
+using System;
 using Utilities.Common.Data;
-using Utilities.Common.Sql;
 
-namespace Utilities.PSql
+namespace Utilities.TSql.Data
 {
     public sealed class SqlDataReaderAsync : DataReaderAsync
     {
-        private readonly NpgsqlDataReader _reader;
+        private readonly SqlDataReader _reader;
 
-        public SqlDataReaderAsync(NpgsqlDataReader reader)
+        public SqlDataReaderAsync(SqlDataReader reader)
             : base(reader)
         {
             _reader = reader ?? throw new ArgumentNullException(nameof(reader));

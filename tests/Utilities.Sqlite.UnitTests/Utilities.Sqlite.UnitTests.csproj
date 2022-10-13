@@ -30,5 +30,9 @@
   <ItemGroup>
     <None Remove="FluentAssertions" />
     <None Remove="AutoFixture" />
+    <None Remove="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

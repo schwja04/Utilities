@@ -9,9 +9,11 @@
   <ItemGroup>
     <None Remove="Abstractions\" />
     <None Remove="Microsoft.Data.Sqlite.Core" />
+    <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.10" />

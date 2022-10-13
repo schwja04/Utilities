@@ -7,7 +7,7 @@ using Utilities.Common.Data;
 using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
 
-namespace Utilities.Sqlite
+namespace Utilities.Sqlite.Data
 {
     public sealed class SqlDataReaderAsync : DataReaderAsync
     {

@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Npgsql;
 using System;
+using Utilities.PSql.Data;
 using Xunit;
 
-namespace Utilities.PSql.UnitTests
+namespace Utilities.PSql.UnitTests.Data
 {
     public class SqlDataReaderAsyncShould
     {

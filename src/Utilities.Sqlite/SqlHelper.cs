@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql.Abstractions;
 using Utilities.Sqlite.Abstractions;
+using Utilities.Sqlite.Data;
 
 namespace Utilities.Sqlite
 {

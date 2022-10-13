@@ -5,10 +5,10 @@ using System;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using Utilities.Common.Testing.Sql.DTO;
+using Utilities.Common.Testing.Sql.Data;
 using Xunit;
 
-namespace Utilities.Common.Testing.Sql.UnitTests.DTO
+namespace Utilities.Common.Testing.Sql.UnitTests.Data
 {
     public class TestDataReaderAsyncShould
     {

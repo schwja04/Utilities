@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
-using Microsoft.Data.Sqlite;
+using Microsoft.Data.SqlClient;
 using System;
-using Utilities.Sqlite;
+using Utilities.TSql.Data;
 using Xunit;
 
-namespace Utilities.Sqlite.UnitTests
+namespace Utilities.TSql.UnitTests.Data
 {
     public class SqlDataReaderAsyncShould
     {
@@ -12,7 +12,7 @@ namespace Utilities.Sqlite.UnitTests
         public void Ctor_ShouldThrowArgumentNullException()
         {
             // Arrange
-            SqliteDataReader reader = null;
+            SqlDataReader reader = null;
 
             // Act
             var act = () => new SqlDataReaderAsync(reader);

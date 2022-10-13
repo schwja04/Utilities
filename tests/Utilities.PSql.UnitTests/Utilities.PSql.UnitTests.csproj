@@ -25,8 +25,12 @@
 
   <ItemGroup>
     <None Remove="AutoFixture" />
+    <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Utilities.PSql\Utilities.PSql.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

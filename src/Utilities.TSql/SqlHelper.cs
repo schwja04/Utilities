@@ -7,6 +7,7 @@ using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql.Abstractions;
 using Utilities.TSql.Abstractions;
+using Utilities.TSql.Data;
 
 using TSqlCommand = Microsoft.Data.SqlClient.SqlCommand;
 using TSqlConnection = Microsoft.Data.SqlClient.SqlConnection;

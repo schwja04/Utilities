@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
 
-namespace Utilities.Common.Testing.Sql.DTO
+namespace Utilities.Common.Testing.Sql.Data
 {
     internal sealed class TestDataReaderAsync : DataReaderAsync
     {
