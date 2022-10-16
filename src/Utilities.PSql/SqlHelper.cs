@@ -11,33 +11,24 @@ using Utilities.PSql.Data;
 
 namespace Utilities.PSql
 {
-    public class SqlHelper : ISqlHelperAsync<NpgsqlTransaction, NpgsqlParameter>, ISqlHelper<NpgsqlTransaction, NpgsqlParameter>
+    public sealed class SqlHelper : ISqlHelperAsync<NpgsqlTransaction, NpgsqlParameter>, ISqlHelper<NpgsqlTransaction, NpgsqlParameter>
     {
         private const int DEFAULT_COMMAND_TIMEOUT = 30;
 
         #region Both Synchronous and Asynchronous Method
-        public ISqlTransaction<NpgsqlTransaction> CreateTransaction(string connectionString)
-        {
-            return new SqlTransaction(connectionString);
-        }
+        public ISqlTransaction<NpgsqlTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
         #endregion
 
         #region Synchronous Methods
         #region ExecuteNonQuery
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -63,20 +54,14 @@ namespace Utilities.PSql
             return command.ExecuteNonQuery();
         }
 
-        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -90,7 +75,7 @@ namespace Utilities.PSql
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -99,26 +84,20 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteReader
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
-            var connection = new NpgsqlConnection(connectionString);
+            using var connection = new NpgsqlConnection(connectionString);
 
-            if (connection.State != ConnectionState.Open)
+            if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
@@ -138,20 +117,14 @@ namespace Utilities.PSql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -165,7 +138,7 @@ namespace Utilities.PSql
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -174,24 +147,23 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteScalar
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new NpgsqlConnection(connectionString);
+
+            if (connection.State is not ConnectionState.Open)
+            {
+                connection.Open();
+            }
 
             using var command = new NpgsqlCommand(commandText)
             {
@@ -208,20 +180,14 @@ namespace Utilities.PSql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
@@ -249,20 +215,14 @@ namespace Utilities.PSql
         #region Asynchronous Methods
 
         #region ExecuteNonQueryAsync
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -285,20 +245,14 @@ namespace Utilities.PSql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -322,24 +276,19 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteReaderAsync
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
-            var connection = new NpgsqlConnection(connectionString);
+            using var connection = new NpgsqlConnection(connectionString);
 
             using var command = new NpgsqlCommand(commandText)
             {
@@ -358,20 +307,14 @@ namespace Utilities.PSql
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
@@ -395,20 +338,14 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteScalarAsync
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
@@ -431,20 +368,14 @@ namespace Utilities.PSql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {

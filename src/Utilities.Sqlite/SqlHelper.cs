@@ -11,39 +11,30 @@ using Utilities.Sqlite.Data;
 
 namespace Utilities.Sqlite
 {
-    public class SqlHelper : ISqlHelperAsync<SqliteTransaction, SqliteParameter>, ISqlHelper<SqliteTransaction, SqliteParameter>
+    public sealed class SqlHelper : ISqlHelperAsync<SqliteTransaction, SqliteParameter>, ISqlHelper<SqliteTransaction, SqliteParameter>
     {
         private const int DEFAULT_COMMAND_TIMEOUT = 30;
 
         #region Both Synchronous and Asynchronous Method
-        public ISqlTransaction<SqliteTransaction> CreateTransaction(string connectionString)
-        {
-            return new SqlTransaction(connectionString);
-        }
+        public ISqlTransaction<SqliteTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
         #endregion
 
         #region Synchronous Methods
         #region ExecuteNonQuery
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
             using var connection = new SqliteConnection(connectionString);
 
-            if (connection.State != ConnectionState.Open)
+            if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
@@ -63,20 +54,14 @@ namespace Utilities.Sqlite
             return command.ExecuteNonQuery();
         }
 
-        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public int ExecuteNonQuery(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
@@ -90,7 +75,7 @@ namespace Utilities.Sqlite
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -99,26 +84,20 @@ namespace Utilities.Sqlite
         #endregion
 
         #region ExecuteReader
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
-            var connection = new SqliteConnection(connectionString);
+            using var connection = new SqliteConnection(connectionString);
 
-            if (connection.State != ConnectionState.Open)
+            if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
@@ -138,20 +117,14 @@ namespace Utilities.Sqlite
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public IDataReader ExecuteReader(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
@@ -165,7 +138,7 @@ namespace Utilities.Sqlite
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -174,24 +147,23 @@ namespace Utilities.Sqlite
         #endregion
 
         #region ExecuteScalar
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct =>
+            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new SqliteConnection(connectionString);
+
+            if (connection.State is not ConnectionState.Open)
+            {
+                connection.Open();
+            }
 
             using var command = new SqliteCommand(commandText)
             {
@@ -208,20 +180,14 @@ namespace Utilities.Sqlite
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct =>
+            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public T ExecuteScalar<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout) where T : struct
         {
@@ -249,20 +215,14 @@ namespace Utilities.Sqlite
         #region Asynchronous Methods
 
         #region ExecuteNonQueryAsync
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
@@ -285,20 +245,14 @@ namespace Utilities.Sqlite
             return await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
@@ -322,24 +276,18 @@ namespace Utilities.Sqlite
         #endregion
 
         #region ExecuteReaderAsync
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
-            var connection = new SqliteConnection(connectionString);
+            using var connection = new SqliteConnection(connectionString);
 
             using var command = new SqliteCommand(commandText)
             {
@@ -358,20 +306,14 @@ namespace Utilities.Sqlite
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) =>
+            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout)
         {
@@ -395,20 +337,14 @@ namespace Utilities.Sqlite
         #endregion
 
         #region ExecuteScalarAsync
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct =>
+            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout) where T : struct
         {
@@ -431,20 +367,14 @@ namespace Utilities.Sqlite
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
+        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters) where T : struct =>
+            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
 
         public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<SqliteTransaction> transaction, CommandType commandType, string commandText, IEnumerable<SqliteParameter> commandParameters, int commandTimeout) where T : struct
         {
