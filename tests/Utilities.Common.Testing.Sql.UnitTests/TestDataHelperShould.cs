@@ -1,12 +1,12 @@
-﻿using System;
+﻿using AutoFixture;
+using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoFixture;
-using FluentAssertions;
+using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Data.Extensions;
-using Utilities.Common.Sql.Abstractions;
 using Xunit;
 
 namespace Utilities.Common.Testing.Sql.UnitTests

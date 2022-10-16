@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
+using System;
 using Utilities.Common.Sql.Abstractions;
 using Utilities.TSql.Abstractions;
 using Xunit;
