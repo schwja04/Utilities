@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
-using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
+using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
 using Utilities.TSql.Abstractions;
 using Utilities.TSql.Data;
@@ -16,26 +16,20 @@ using TSqlTransaction = Microsoft.Data.SqlClient.SqlTransaction;
 
 namespace Utilities.TSql
 {
-    public sealed class SqlHelper : ISqlHelperAsync<TSqlTransaction, TSqlParameter>, ISqlHelper<TSqlTransaction, TSqlParameter>
+    public sealed class SqlHelper : SqlHelper<TSqlTransaction, TSqlParameter>
     {
-        private const int DEFAULT_COMMAND_TIMEOUT = 30;
+        static SqlHelper()
+        {
+            DEFAULT_COMMAND_TIMEOUT = 30;
+        }
 
         #region Both Synchronous and Asynchronous Method
-        public ISqlTransaction<TSqlTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
+        public override ISqlTransaction<TSqlTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
         #endregion
 
         #region Synchronous Methods
         #region ExecuteNonQuery
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText) =>
-            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
-            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -59,16 +53,7 @@ namespace Utilities.TSql
             return command.ExecuteNonQuery();
         }
 
-        public int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) =>
-            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
-            ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -90,16 +75,7 @@ namespace Utilities.TSql
         #endregion
 
         #region ExecuteReader
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText) =>
-            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
-            ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -122,16 +98,7 @@ namespace Utilities.TSql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) =>
-            ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
-            ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -152,16 +119,7 @@ namespace Utilities.TSql
         #endregion
 
         #region ExecuteScalar
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
-            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
-            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) where T : struct =>
-            ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -185,16 +143,7 @@ namespace Utilities.TSql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
-            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
-            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) where T : struct =>
-            ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -220,16 +169,7 @@ namespace Utilities.TSql
         #region Asynchronous Methods
 
         #region ExecuteNonQueryAsync
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText) =>
-            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
-            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -250,16 +190,7 @@ namespace Utilities.TSql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) =>
-            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
-            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -281,16 +212,7 @@ namespace Utilities.TSql
         #endregion
 
         #region ExecuteReaderAsync
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText) =>
-            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout) =>
-            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -311,16 +233,7 @@ namespace Utilities.TSql
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) =>
-            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) =>
-            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) =>
-            await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -342,16 +255,7 @@ namespace Utilities.TSql
         #endregion
 
         #region ExecuteScalarAsync
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct =>
-            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
-            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) where T : struct =>
-            await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new TSqlConnection(connectionString);
 
@@ -372,16 +276,7 @@ namespace Utilities.TSql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText) where T : struct =>
-            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct =>
-            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters) where T : struct =>
-            await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
