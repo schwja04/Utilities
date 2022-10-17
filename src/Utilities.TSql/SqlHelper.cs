@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.TSql.Abstractions;
 using Utilities.TSql.Data;
 
 using TSqlCommand = Microsoft.Data.SqlClient.SqlCommand;
@@ -16,7 +15,7 @@ using TSqlTransaction = Microsoft.Data.SqlClient.SqlTransaction;
 
 namespace Utilities.TSql
 {
-    public sealed class SqlHelper : SqlHelper<TSqlTransaction, TSqlParameter>
+    public sealed class SqlHelper : SqlHelper<TSqlParameter>
     {
         static SqlHelper()
         {
@@ -24,7 +23,7 @@ namespace Utilities.TSql
         }
 
         #region Both Synchronous and Asynchronous Method
-        public override ISqlTransaction<TSqlTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
+        public override ISqlTransaction CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
         #endregion
 
         #region Synchronous Methods
@@ -53,7 +52,7 @@ namespace Utilities.TSql
             return command.ExecuteNonQuery();
         }
 
-        public override int ExecuteNonQuery(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -98,7 +97,7 @@ namespace Utilities.TSql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public override IDataReader ExecuteReader(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -143,7 +142,7 @@ namespace Utilities.TSql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public override T ExecuteScalar<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -190,7 +189,7 @@ namespace Utilities.TSql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -233,7 +232,7 @@ namespace Utilities.TSql
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -276,7 +275,7 @@ namespace Utilities.TSql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<TSqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<TSqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -299,13 +298,15 @@ namespace Utilities.TSql
 
         #endregion
 
-        private static TSqlTransaction GetSqlClientTransaction(ISqlTransaction<TSqlTransaction> sqlTransaction)
+        private static TSqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            ISqlClientTransaction tran = sqlTransaction as ISqlClientTransaction;
+            var tran = sqlTransaction as ISqlClientTransaction<TSqlTransaction>;
 
             if (tran is null)
             {
-                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction)}", nameof(sqlTransaction));
+                throw new ArgumentException(
+                    $"sqlTransaction is null or does not implement {nameof(ISqlClientTransaction<TSqlTransaction>)}",
+                    nameof(sqlTransaction));
             }
 
             return tran.SqlClientTransaction;

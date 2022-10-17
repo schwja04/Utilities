@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.PSql.Abstractions;
 using Utilities.PSql.Data;
 
 namespace Utilities.PSql
 {
-    public sealed class SqlHelper : SqlHelper<NpgsqlTransaction, NpgsqlParameter>
+    public sealed class SqlHelper : SqlHelper<NpgsqlParameter>
     {
         static SqlHelper()
         {
@@ -20,7 +19,7 @@ namespace Utilities.PSql
         }
 
         #region Both Synchronous and Asynchronous Method
-        public override ISqlTransaction<NpgsqlTransaction> CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
+        public override ISqlTransaction CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
         #endregion
 
         #region Synchronous Methods
@@ -49,7 +48,7 @@ namespace Utilities.PSql
             return command.ExecuteNonQuery();
         }
 
-        public override int ExecuteNonQuery(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -94,7 +93,7 @@ namespace Utilities.PSql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public override IDataReader ExecuteReader(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -139,7 +138,7 @@ namespace Utilities.PSql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public override T ExecuteScalar<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -186,7 +185,7 @@ namespace Utilities.PSql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -229,7 +228,7 @@ namespace Utilities.PSql
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -272,7 +271,7 @@ namespace Utilities.PSql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<NpgsqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -295,13 +294,15 @@ namespace Utilities.PSql
 
         #endregion
 
-        private static NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction<NpgsqlTransaction> sqlTransaction)
+        private static NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            ISqlClientTransaction tran = sqlTransaction as ISqlClientTransaction;
+            var tran = sqlTransaction as ISqlClientTransaction<NpgsqlTransaction>;
 
             if (tran is null)
             {
-                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction)}", nameof(sqlTransaction));
+                throw new ArgumentException(
+                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<NpgsqlTransaction>)}",
+                    nameof(sqlTransaction));
             }
 
             return tran.SqlClientTransaction;

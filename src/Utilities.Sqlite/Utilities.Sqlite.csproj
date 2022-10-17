@@ -7,12 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Abstractions\" />
     <None Remove="Microsoft.Data.Sqlite.Core" />
     <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Abstractions\" />
     <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>

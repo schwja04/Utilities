@@ -2,11 +2,11 @@
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.PSql.Abstractions;
 
 namespace Utilities.PSql
 {
-    public sealed class SqlTransaction : ISqlClientTransaction, ISqlTransaction<NpgsqlTransaction>
+    public sealed class SqlTransaction :
+        ISqlClientTransaction<NpgsqlTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
         private NpgsqlConnection _sqlConnection;
