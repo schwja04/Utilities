@@ -2,11 +2,10 @@
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.Sqlite.Abstractions;
 
 namespace Utilities.Sqlite
 {
-    public sealed class SqlTransaction : ISqlClientTransaction, ISqlTransaction<SqliteTransaction>
+    public sealed class SqlTransaction : ISqlClientTransaction<SqliteTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
         private SqliteConnection _sqlConnection;

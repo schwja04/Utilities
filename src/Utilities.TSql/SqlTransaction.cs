@@ -2,16 +2,17 @@
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.TSql.Abstractions;
+
+using TSqlTransaction = Microsoft.Data.SqlClient.SqlTransaction;
 
 namespace Utilities.TSql
 {
-    public sealed class SqlTransaction : ISqlClientTransaction, ISqlTransaction<Microsoft.Data.SqlClient.SqlTransaction>
+    public sealed class SqlTransaction : ISqlClientTransaction<TSqlTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
         private SqlConnection _sqlConnection;
         
-        private Microsoft.Data.SqlClient.SqlTransaction _sqlTransaction;
+        private TSqlTransaction _sqlTransaction;
 
         public SqlTransaction(string connectionString)
         {
@@ -23,7 +24,7 @@ namespace Utilities.TSql
             _connectionString = connectionString;
         }
 
-        public Microsoft.Data.SqlClient.SqlTransaction SqlClientTransaction => _sqlTransaction;
+        public TSqlTransaction SqlClientTransaction => _sqlTransaction;
 
         public void BeginTransaction()
         {
