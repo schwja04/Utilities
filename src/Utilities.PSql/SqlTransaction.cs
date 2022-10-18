@@ -2,11 +2,11 @@
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.PSql.Abstractions;
 
 namespace Utilities.PSql
 {
-    public class SqlTransaction : ISqlClientTransaction, ISqlTransaction<NpgsqlTransaction>
+    public sealed class SqlTransaction :
+        ISqlClientTransaction<NpgsqlTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
         private NpgsqlConnection _sqlConnection;
@@ -93,7 +93,7 @@ namespace Utilities.PSql
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
 

@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Utilities.Common.Sql.Abstractions;
-using Utilities.Sqlite.Abstractions;
+using System;
 using Xunit;
 
 namespace Utilities.Sqlite.UnitTests

@@ -1,9 +1,6 @@
-﻿using System;
-using AutoFixture;
+﻿using AutoFixture;
 using FluentAssertions;
-using Npgsql;
-using Utilities.Common.Sql.Abstractions;
-using Utilities.PSql.Abstractions;
+using System;
 using Xunit;
 
 namespace Utilities.PSql.UnitTests

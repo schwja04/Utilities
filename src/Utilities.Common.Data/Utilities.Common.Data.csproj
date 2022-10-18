@@ -11,4 +11,10 @@
       <_Parameter1>$(AssemblyName).UnitTests</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
+  <ItemGroup>
+    <None Remove="Abstractions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+  </ItemGroup>
 </Project>

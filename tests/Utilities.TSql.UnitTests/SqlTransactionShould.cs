@@ -1,7 +1,6 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using Utilities.Common.Sql.Abstractions;
-using Utilities.TSql.Abstractions;
+using System;
 using Xunit;
 
 namespace Utilities.TSql.UnitTests
