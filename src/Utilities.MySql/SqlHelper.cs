@@ -5,17 +5,22 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Utilities.Common.Data;
+using Utilities.Common.Data.Abstractions;
+using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.MySql.Abstractions;
+using Utilities.MySql.Data;
 
 namespace Utilities.MySql
 {
-    public class SqlHelper : ISqlHelperAsync<MySqlTransaction, MySqlParameter>, ISqlHelper<MySqlTransaction, MySqlParameter>
+    public sealed class SqlHelper : SqlHelper<MySqlParameter>
     {
-        private const int DEFAULT_COMMAND_TIMEOUT = 30;
+        static SqlHelper()
+        {
+            DEFAULT_COMMAND_TIMEOUT = 30;
+        }
 
         #region Both Synchronous and Asynchronous Method
-        public ISqlTransaction<MySqlTransaction> CreateTransaction(string connectionString)
+        public override ISqlTransaction CreateTransaction(string connectionString)
         {
             return new SqlTransaction(connectionString);
         }
@@ -23,26 +28,11 @@ namespace Utilities.MySql
 
         #region Synchronous Methods
         #region ExecuteNonQuery
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return ExecuteNonQuery(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new MySqlConnection(connectionString);
 
-            if (connection.State != ConnectionState.Open)
+            if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
@@ -62,22 +52,7 @@ namespace Utilities.MySql
             return command.ExecuteNonQuery();
         }
 
-        public int ExecuteNonQuery(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public int ExecuteNonQuery(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public int ExecuteNonQuery(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return ExecuteNonQuery(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public int ExecuteNonQuery(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -89,7 +64,7 @@ namespace Utilities.MySql
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -98,26 +73,11 @@ namespace Utilities.MySql
         #endregion
 
         #region ExecuteReader
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText)
+        public override IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
+            using var connection = new MySqlConnection(connectionString);
 
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return ExecuteReader(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
-        {
-            var connection = new MySqlConnection(connectionString);
-
-            if (connection.State != ConnectionState.Open)
+            if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
@@ -137,22 +97,7 @@ namespace Utilities.MySql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public IDataReader ExecuteReader(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public IDataReader ExecuteReader(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public IDataReader ExecuteReader(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return ExecuteReader(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public IDataReader ExecuteReader(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -164,7 +109,7 @@ namespace Utilities.MySql
                 Transaction = tran
             };
 
-            if (commandParameters != null)
+            if (commandParameters is not null)
             {
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
@@ -173,24 +118,14 @@ namespace Utilities.MySql
         #endregion
 
         #region ExecuteScalar
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new MySqlConnection(connectionString);
+
+            if (connection.State is not ConnectionState.Open)
+            {
+                connection.Open();
+            }
 
             using var command = new MySqlCommand(commandText)
             {
@@ -207,22 +142,7 @@ namespace Utilities.MySql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public T ExecuteScalar<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public T ExecuteScalar<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public T ExecuteScalar<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters) where T : struct
-        {
-            return ExecuteScalar<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public T ExecuteScalar<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -248,22 +168,7 @@ namespace Utilities.MySql
         #region Asynchronous Methods
 
         #region ExecuteNonQueryAsync
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             using var connection = new MySqlConnection(connectionString);
 
@@ -284,22 +189,7 @@ namespace Utilities.MySql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return await ExecuteNonQueryAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<int> ExecuteNonQueryAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -321,24 +211,9 @@ namespace Utilities.MySql
         #endregion
 
         #region ExecuteReaderAsync
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
-        {
-            var connection = new MySqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
             using var command = new MySqlCommand(commandText)
             {
@@ -353,28 +228,14 @@ namespace Utilities.MySql
             }
 
             await connection.OpenAsync();
+
             return new SqlDataReaderAsync(command.ExecuteReader(CommandBehavior.CloseConnection));
             // TODO: Figure out how to make this async. The following line returns DbRataReader NOT MySqlDataReader
             // return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
             //return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters)
-        {
-            return await ExecuteReaderAsync(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -398,22 +259,7 @@ namespace Utilities.MySql
         #endregion
 
         #region ExecuteScalarAsync
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(connectionString, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             using var connection = new MySqlConnection(connectionString);
 
@@ -434,22 +280,7 @@ namespace Utilities.MySql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, int commandTimeout) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters: null, commandTimeout);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters) where T : struct
-        {
-            return await ExecuteScalarAsync<T>(transaction, commandType, commandText, commandParameters, DEFAULT_COMMAND_TIMEOUT);
-        }
-
-        public async Task<T> ExecuteScalarAsync<T>(ISqlTransaction<MySqlTransaction> transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
@@ -472,13 +303,13 @@ namespace Utilities.MySql
 
         #endregion
 
-        private static MySqlTransaction GetSqlClientTransaction(ISqlTransaction<MySqlTransaction> sqlTransaction)
+        private static MySqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            ISqlClientTransaction tran = sqlTransaction as ISqlClientTransaction;
+            var tran = sqlTransaction as ISqlClientTransaction<MySqlTransaction>;
 
             if (tran is null)
             {
-                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction)}", nameof(sqlTransaction));
+                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<MySqlTransaction>)}", nameof(sqlTransaction));
             }
 
             return tran.SqlClientTransaction;

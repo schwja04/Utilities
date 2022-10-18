@@ -2,11 +2,10 @@
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.MySql.Abstractions;
 
 namespace Utilities.MySql
 {
-    public class SqlTransaction : ISqlClientTransaction, ISqlTransaction<MySqlTransaction>
+    public sealed class SqlTransaction : ISqlClientTransaction<MySqlTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
         private MySqlConnection _sqlConnection;
@@ -93,7 +92,7 @@ namespace Utilities.MySql
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_isDisposed) return;
 

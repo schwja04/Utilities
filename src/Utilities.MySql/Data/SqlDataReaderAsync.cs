@@ -1,16 +1,16 @@
-﻿using Npgsql;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Utilities.Common.Data;
 
-namespace Utilities.PSql.Data
+namespace Utilities.MySql.Data
 {
     public sealed class SqlDataReaderAsync : DataReaderAsync
     {
-        private readonly NpgsqlDataReader _reader;
+        private readonly MySqlDataReader _reader;
 
-        public SqlDataReaderAsync(NpgsqlDataReader reader)
+        public SqlDataReaderAsync(MySqlDataReader reader)
             : base(reader)
         {
             _reader = reader ?? throw new ArgumentNullException(nameof(reader));
@@ -22,14 +22,12 @@ namespace Utilities.PSql.Data
         public override async Task<bool> IsDBNullAsync(int i, CancellationToken cancellationToken) =>
             await _reader.IsDBNullAsync(i, cancellationToken);
 
-        public override async Task<bool> NextResultAsync() =>
-            await _reader.NextResultAsync();
+        public override async Task<bool> NextResultAsync() => await _reader.NextResultAsync();
 
         public override async Task<bool> NextResultAsync(CancellationToken cancellationToken) =>
             await _reader.NextResultAsync(cancellationToken);
 
-        public override async Task<bool> ReadAsync() =>
-            await _reader.ReadAsync();
+        public override async Task<bool> ReadAsync() => await _reader.ReadAsync();
 
         public override async Task<bool> ReadAsync(CancellationToken cancellationToken) =>
             await _reader.ReadAsync(cancellationToken);

@@ -7,22 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Abstractions\" />
     <None Remove="MySql.Data" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Abstractions\" />
+    <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities.Common.Data\Utilities.Common.Data.csproj" />
     <ProjectReference Include="..\Utilities.Common.Sql\Utilities.Common.Sql.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.30" />
+    <PackageReference Include="MySql.Data" Version="8.0.31" />
   </ItemGroup>
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
       <_Parameter1>$(AssemblyName).UnitTests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

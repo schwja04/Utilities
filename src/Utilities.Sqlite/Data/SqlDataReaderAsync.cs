@@ -1,11 +1,8 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
-using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using Utilities.Common.Data;
-using Utilities.Common.Sql;
-using Utilities.Common.Sql.Abstractions;
 
 namespace Utilities.Sqlite.Data
 {
