@@ -1,4 +1,4 @@
-﻿using MySql.Data.MySqlClient;
+﻿using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -229,10 +229,7 @@ namespace Utilities.MySql
 
             await connection.OpenAsync();
 
-            return new SqlDataReaderAsync(command.ExecuteReader(CommandBehavior.CloseConnection));
-            // TODO: Figure out how to make this async. The following line returns DbRataReader NOT MySqlDataReader
-            // return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
-            //return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
+            return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
         public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
@@ -252,9 +249,7 @@ namespace Utilities.MySql
                 command.Parameters.AddRange(commandParameters.ToArray());
             }
 
-            return await Task.Run(() => new SqlDataReaderAsync(command.ExecuteReader(CommandBehavior.CloseConnection)));
-            // TODO: Figure out how to make this async. The following line returns DbRataReader NOT MySqlDataReader
-            // return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
+            return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
         #endregion
 

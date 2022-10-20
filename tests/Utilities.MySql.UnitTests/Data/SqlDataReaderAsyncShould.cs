@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using Utilities.MySql.Data;
 using Xunit;
