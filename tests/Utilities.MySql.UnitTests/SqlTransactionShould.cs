@@ -3,7 +3,7 @@ using FluentAssertions;
 using System;
 using Xunit;
 
-namespace Utilities.TSql.UnitTests
+namespace Utilities.MySql.UnitTests
 {
     public class SqlTransactionShould
     {

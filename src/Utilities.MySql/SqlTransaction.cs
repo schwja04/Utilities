@@ -1,18 +1,16 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using MySqlConnector;
 using System;
 using System.Data;
 using Utilities.Common.Sql.Abstractions;
 
-using TSqlTransaction = Microsoft.Data.SqlClient.SqlTransaction;
-
-namespace Utilities.TSql
+namespace Utilities.MySql
 {
-    public sealed class SqlTransaction : ISqlClientTransaction<TSqlTransaction>, ISqlTransaction
+    public sealed class SqlTransaction : ISqlClientTransaction<MySqlTransaction>, ISqlTransaction
     {
         private readonly string _connectionString;
-        private SqlConnection _sqlConnection;
+        private MySqlConnection _sqlConnection;
         
-        private TSqlTransaction _sqlTransaction;
+        private MySqlTransaction _sqlTransaction;
 
         public SqlTransaction(string connectionString)
         {
@@ -24,7 +22,7 @@ namespace Utilities.TSql
             _connectionString = connectionString;
         }
 
-        public TSqlTransaction SqlClientTransaction => _sqlTransaction;
+        public MySqlTransaction SqlClientTransaction => _sqlTransaction;
 
         public void BeginTransaction()
         {
@@ -34,7 +32,7 @@ namespace Utilities.TSql
                 throw new InvalidOperationException("Cannot begin transaction more than once.");
             }
 
-            _sqlConnection = new SqlConnection(_connectionString);
+            _sqlConnection = new MySqlConnection(_connectionString);
             _sqlConnection.Open();
             _sqlTransaction = _sqlConnection.BeginTransaction();
         }

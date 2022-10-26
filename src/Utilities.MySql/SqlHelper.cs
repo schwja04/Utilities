@@ -1,17 +1,18 @@
-﻿using Npgsql;
+﻿using MySqlConnector;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
-using Utilities.PSql.Data;
+using Utilities.MySql.Data;
 
-namespace Utilities.PSql
+namespace Utilities.MySql
 {
-    public sealed class SqlHelper : SqlHelper<NpgsqlParameter>
+    public sealed class SqlHelper : SqlHelper<MySqlParameter>
     {
         static SqlHelper()
         {
@@ -19,21 +20,24 @@ namespace Utilities.PSql
         }
 
         #region Both Synchronous and Asynchronous Method
-        public override ISqlTransaction CreateTransaction(string connectionString) => new SqlTransaction(connectionString);
+        public override ISqlTransaction CreateTransaction(string connectionString)
+        {
+            return new SqlTransaction(connectionString);
+        }
         #endregion
 
         #region Synchronous Methods
         #region ExecuteNonQuery
-        public override int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
             if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -48,11 +52,11 @@ namespace Utilities.PSql
             return command.ExecuteNonQuery();
         }
 
-        public override int ExecuteNonQuery(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override int ExecuteNonQuery(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -69,16 +73,16 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteReader
-        public override IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
             if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -93,11 +97,11 @@ namespace Utilities.PSql
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
 
-        public override IDataReader ExecuteReader(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override IDataReader ExecuteReader(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -114,16 +118,16 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteScalar
-        public override T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
             if (connection.State is not ConnectionState.Open)
             {
                 connection.Open();
             }
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 Connection = connection,
                 CommandType = commandType,
@@ -138,11 +142,11 @@ namespace Utilities.PSql
             return CastScalar<T>(command.ExecuteScalar());
         }
 
-        public override T ExecuteScalar<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override T ExecuteScalar<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 Connection = tran.Connection,
                 CommandType = commandType,
@@ -164,11 +168,11 @@ namespace Utilities.PSql
         #region Asynchronous Methods
 
         #region ExecuteNonQueryAsync
-        public override async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -185,11 +189,11 @@ namespace Utilities.PSql
             return await command.ExecuteNonQueryAsync();
         }
 
-        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<int> ExecuteNonQueryAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -207,11 +211,11 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteReaderAsync
-        public override async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 Connection = connection,
                 CommandType = commandType,
@@ -228,11 +232,11 @@ namespace Utilities.PSql
             return new SqlDataReaderAsync(await command.ExecuteReaderAsync(CommandBehavior.CloseConnection));
         }
 
-        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout)
+        public override async Task<IDataReaderAsync> ExecuteReaderAsync(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout)
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 CommandTimeout = commandTimeout,
                 CommandType = commandType,
@@ -250,11 +254,11 @@ namespace Utilities.PSql
         #endregion
 
         #region ExecuteScalarAsync
-        public override async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(string connectionString, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
-            using var connection = new NpgsqlConnection(connectionString);
+            using var connection = new MySqlConnection(connectionString);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 Connection = connection,
                 CommandType = commandType,
@@ -271,11 +275,11 @@ namespace Utilities.PSql
             return CastScalar<T>(await command.ExecuteScalarAsync());
         }
 
-        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<NpgsqlParameter> commandParameters, int commandTimeout) where T : struct
+        public override async Task<T> ExecuteScalarAsync<T>(ISqlTransaction transaction, CommandType commandType, string commandText, IEnumerable<MySqlParameter> commandParameters, int commandTimeout) where T : struct
         {
             var tran = GetSqlClientTransaction(transaction);
 
-            using var command = new NpgsqlCommand(commandText)
+            using var command = new MySqlCommand(commandText)
             {
                 Connection = tran.Connection,
                 CommandType = commandType,
@@ -294,15 +298,13 @@ namespace Utilities.PSql
 
         #endregion
 
-        private static NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
+        private static MySqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            var tran = sqlTransaction as ISqlClientTransaction<NpgsqlTransaction>;
+            var tran = sqlTransaction as ISqlClientTransaction<MySqlTransaction>;
 
             if (tran is null)
             {
-                throw new ArgumentException(
-                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<NpgsqlTransaction>)}",
-                    nameof(sqlTransaction));
+                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<MySqlTransaction>)}", nameof(sqlTransaction));
             }
 
             return tran.SqlClientTransaction;

@@ -9,10 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="6.7.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="xunit" Version="2.4.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -20,17 +19,22 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.7.0" />
     <PackageReference Include="AutoFixture" Version="4.17.0" />
-    <PackageReference Include="Moq" Version="4.18.2" />
+    <PackageReference Include="MySqlConnector" Version="2.1.13" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Utilities.Common.Data\Utilities.Common.Data.csproj" />
-    <ProjectReference Include="..\..\src\Utilities.Common.Testing.Sql\Utilities.Common.Testing.Sql.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Remove="Data\" />
+    <None Remove="FluentAssertions" />
     <None Remove="AutoFixture" />
-    <None Remove="Moq" />
+    <None Remove="MySql.Data" />
+    <None Remove="MySqlConnector" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Utilities.MySql\Utilities.MySql.csproj" />
   </ItemGroup>
 </Project>

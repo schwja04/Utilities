@@ -3,8 +3,7 @@ using System.Data.Common;
 
 namespace Utilities.Common.Sql.Abstractions
 {
-    public interface ISqlTransaction<TTransaction> : IDisposable
-        where TTransaction : DbTransaction
+    public interface ISqlTransaction : IDisposable
     {
         void BeginTransaction();
         void Commit();
