@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Data;
-using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
-using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {

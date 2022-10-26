@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Collections.Concurrent;
-using Utilities.Common.Data.Extensions;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Utilities.Common.Data
@@ -40,14 +38,10 @@ namespace Utilities.Common.Data
 
         public static T Cast<T>(object value)
         {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
             InitializeHandlers();
 
-            Type destinationType = typeof(T);
+            Type baseType = typeof(T);
+            Type destinationType = Nullable.GetUnderlyingType(baseType) ?? baseType;
             object resultValue = value;
 
             if (_defaultValueHandlers.TryGetValue(destinationType, out Func<object, object> handler))
