@@ -2,7 +2,8 @@
 using FluentAssertions;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Security.Cryptography.X509Certificates;
+using Utilities.Common.Data;
 using Xunit;
 
 namespace Utilities.Common.Data.UnitTests
@@ -97,13 +98,23 @@ namespace Utilities.Common.Data.UnitTests
         }
 
         [Fact]
-        public void Cast_WhenObjectIsNull_Throw_ArgumentNullException()
+        public void Cast_ToNullableInt_ShouldNotThrow_WhenNullIsPassed()
         {
-            // Arrange
-            var action = () => Convert.Cast<int>(null);
+            // Arrange && Act
+            var actual = Convert.Cast<int?>(null);
 
-            // Act && Assert
-            action.Should().Throw<ArgumentNullException>();
+            // Assert
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void Cast_ToReferenceType()
+        {
+            // Arrange && Act
+            var actual = Convert.Cast<List<int>>(null);
+
+            // Assert
+            actual.Should().BeNull();
         }
 
         [Theory]
