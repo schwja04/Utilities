@@ -41,8 +41,8 @@ namespace Utilities.Common.Data
             InitializeHandlers();
 
             Type baseType = typeof(T);
-            Type unlyingType = Nullable.GetUnderlyingType(baseType);
-            Type destinationType = unlyingType ?? baseType;
+            Type underlyingType = Nullable.GetUnderlyingType(baseType);
+            Type destinationType = underlyingType ?? baseType;
 
             object resultValue = value;
 
@@ -51,7 +51,7 @@ namespace Utilities.Common.Data
                 resultValue = handler.Invoke(resultValue);
             }
 
-            return (resultValue is T || destinationType.IsEnum || (value is null && unlyingType is not null))
+            return (resultValue is T || destinationType.IsEnum || (value is null && underlyingType is not null))
                 ? (T)resultValue
                 : (T)System.Convert.ChangeType(resultValue, destinationType);
         }
