@@ -5,8 +5,7 @@ using Utilities.Common.Sql.Abstractions;
 
 namespace Utilities.PSql
 {
-    public sealed class SqlTransaction :
-        ISqlClientTransaction<NpgsqlTransaction>, ISqlTransaction
+    public sealed class SqlTransaction : ISqlTransaction
     {
         private readonly string _connectionString;
         private NpgsqlConnection _sqlConnection;

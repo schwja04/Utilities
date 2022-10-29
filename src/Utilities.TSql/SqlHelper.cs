@@ -300,12 +300,12 @@ namespace Utilities.TSql
 
         private static TSqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            var tran = sqlTransaction as ISqlClientTransaction<TSqlTransaction>;
+            var tran = sqlTransaction as SqlTransaction;
 
             if (tran is null)
             {
                 throw new ArgumentException(
-                    $"sqlTransaction is null or does not implement {nameof(ISqlClientTransaction<TSqlTransaction>)}",
+                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(SqlTransaction)}",
                     nameof(sqlTransaction));
             }
 

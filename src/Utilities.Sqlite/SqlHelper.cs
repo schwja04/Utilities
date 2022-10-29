@@ -296,12 +296,12 @@ namespace Utilities.Sqlite
 
         private static SqliteTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            var tran = sqlTransaction as ISqlClientTransaction<SqliteTransaction>;
+            var tran = sqlTransaction as SqlTransaction;
 
             if (tran is null)
             {
                 throw new ArgumentException(
-                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<SqliteTransaction>)}",
+                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(SqlTransaction)}",
                     nameof(sqlTransaction));
             }
 

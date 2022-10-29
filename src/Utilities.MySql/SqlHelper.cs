@@ -300,11 +300,13 @@ namespace Utilities.MySql
 
         private static MySqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            var tran = sqlTransaction as ISqlClientTransaction<MySqlTransaction>;
+            var tran = sqlTransaction as SqlTransaction;
 
             if (tran is null)
             {
-                throw new ArgumentException($"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<MySqlTransaction>)}", nameof(sqlTransaction));
+                throw new ArgumentException(
+                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(SqlTransaction)}", 
+                    nameof(sqlTransaction));
             }
 
             return tran.SqlClientTransaction;
