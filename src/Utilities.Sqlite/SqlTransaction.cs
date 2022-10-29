@@ -5,7 +5,7 @@ using Utilities.Common.Sql.Abstractions;
 
 namespace Utilities.Sqlite
 {
-    public sealed class SqlTransaction : ISqlClientTransaction<SqliteTransaction>, ISqlTransaction
+    public sealed class SqlTransaction : ISqlTransaction
     {
         private readonly string _connectionString;
         private SqliteConnection _sqlConnection;

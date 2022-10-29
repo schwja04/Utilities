@@ -296,12 +296,12 @@ namespace Utilities.PSql
 
         private static NpgsqlTransaction GetSqlClientTransaction(ISqlTransaction sqlTransaction)
         {
-            var tran = sqlTransaction as ISqlClientTransaction<NpgsqlTransaction>;
+            var tran = sqlTransaction as SqlTransaction;
 
             if (tran is null)
             {
                 throw new ArgumentException(
-                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(ISqlClientTransaction<NpgsqlTransaction>)}",
+                    $"{nameof(sqlTransaction)} is null or does not implement {nameof(SqlTransaction)}",
                     nameof(sqlTransaction));
             }
 

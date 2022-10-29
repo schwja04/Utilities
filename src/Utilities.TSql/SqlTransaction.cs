@@ -7,7 +7,7 @@ using TSqlTransaction = Microsoft.Data.SqlClient.SqlTransaction;
 
 namespace Utilities.TSql
 {
-    public sealed class SqlTransaction : ISqlClientTransaction<TSqlTransaction>, ISqlTransaction
+    public sealed class SqlTransaction : ISqlTransaction
     {
         private readonly string _connectionString;
         private SqlConnection _sqlConnection;
