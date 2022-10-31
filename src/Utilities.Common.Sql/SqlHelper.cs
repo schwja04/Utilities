@@ -8,9 +8,8 @@ using Utilities.Common.Sql.Abstractions;
 namespace Utilities.Common.Sql
 {
 	public abstract class SqlHelper<TParameter> : ISqlHelperAsync<TParameter>, ISqlHelper<TParameter>
-        where TParameter : DbParameter
     {
-        protected static int DEFAULT_COMMAND_TIMEOUT = 30;
+        protected virtual int DEFAULT_COMMAND_TIMEOUT { get; } = 30;
 
         #region Both Synchronous and Asynchronous Method
         public abstract ISqlTransaction CreateTransaction(string connectionString);

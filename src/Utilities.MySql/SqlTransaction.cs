@@ -5,7 +5,7 @@ using Utilities.Common.Sql.Abstractions;
 
 namespace Utilities.MySql
 {
-    public sealed class SqlTransaction : ISqlTransaction
+    internal sealed class SqlTransaction : ISqlTransaction
     {
         private readonly string _connectionString;
         private MySqlConnection _sqlConnection;

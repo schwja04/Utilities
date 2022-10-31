@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 
 namespace Utilities.Common.Sql.Abstractions
 {
     public interface ISqlHelper<TParameter>
-        where TParameter : DbParameter
     {
         ISqlTransaction CreateTransaction(string connectionString);
 

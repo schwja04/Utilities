@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Utilities.Common.Data;
 using Utilities.Common.Data.Abstractions;
 using Utilities.Common.Sql;
 using Utilities.Common.Sql.Abstractions;
@@ -13,9 +14,13 @@ namespace Utilities.Sqlite
 {
     public sealed class SqlHelper : SqlHelper<SqliteParameter>
     {
-        static SqlHelper()
+        private readonly IConvert _convert;
+
+        public SqlHelper() : this(new Common.Data.Convert()) { }
+
+        public SqlHelper(IConvert convert)
         {
-            DEFAULT_COMMAND_TIMEOUT = 30;
+            _convert = convert ?? throw new ArgumentNullException(nameof(convert));
         }
 
         #region Both Synchronous and Asynchronous Method
@@ -308,10 +313,10 @@ namespace Utilities.Sqlite
             return tran.SqlClientTransaction;
         }
 
-        private static T CastScalar<T>(object obj) 
+        private T CastScalar<T>(object obj) 
             where T : struct
         {
-            return (obj is null ? default : Common.Data.Convert.Cast<T>(obj));
+            return (obj is null ? default : _convert.Cast<T>(obj));
         }
     }
 }

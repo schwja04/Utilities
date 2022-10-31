@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {
@@ -12,24 +11,21 @@ namespace Utilities.Common.Data
 
         public DefaultValueHandlerDictionary()
         {
-            _typeHandlers = new()
-            {
-                [typeof(bool)] = HandleBoolean,
-                [typeof(string)] = HandleString
-            };
-
+            _typeHandlers = new();
             DefaultValueHandlers = new(_typeHandlers);
         }
 
-        public ReadOnlyDictionary<Type, Func<object, object>> DefaultValueHandlers { get; }
-
-        public void AddOrUpdate(IEnumerable<KeyValuePair<Type, Func<object, object>>> handlers)
+        public DefaultValueHandlerDictionary(IEnumerable<KeyValuePair<Type, Func<object, object>>> collection)
         {
-            foreach (KeyValuePair<Type, Func<object, object>> handler in handlers)
-            {
-                AddOrUpdate(handler.Key, handler.Value);
-            }
+            if (collection is null) throw new ArgumentNullException(nameof(collection));
+
+            _typeHandlers = new();
+            DefaultValueHandlers = new(_typeHandlers);
+
+            AddOrUpdateMany(collection);
         }
+
+        public ReadOnlyDictionary<Type, Func<object, object>> DefaultValueHandlers { get; }
 
         public void AddOrUpdate(Type type, Func<object, object> handler)
         {
@@ -46,20 +42,30 @@ namespace Utilities.Common.Data
             _typeHandlers.AddOrUpdate(type, handler, (k, v) => handler);
         }
 
+        public void AddOrUpdateMany(IEnumerable<KeyValuePair<Type, Func<object, object>>> handlers)
+        {
+            foreach (KeyValuePair<Type, Func<object, object>> handler in handlers)
+            {
+                AddOrUpdate(handler.Key, handler.Value);
+            }
+        }
+
+        public void Clear() => _typeHandlers.Clear();
+
         public bool TryGetValue(Type type, out Func<object, object> handler) =>
             _typeHandlers.TryGetValue(type, out handler);
 
-        private static object HandleBoolean(object value)
-        {
-            bool boolValue = false;
-            return StringExtensions.TryParseBoolean(value.ToString(), ref boolValue)
-                && boolValue;
-        }
+        //private static object HandleBoolean(object value)
+        //{
+        //    bool boolValue = false;
+        //    return StringExtensions.TryParseBoolean(value.ToString(), ref boolValue)
+        //        && boolValue;
+        //}
 
-        private static object HandleString(object value)
-        {
-            return value.ToString().Trim();
-        }
+        //private static object HandleString(object value)
+        //{
+        //    return value.ToString().Trim();
+        //}
     }
 }
 

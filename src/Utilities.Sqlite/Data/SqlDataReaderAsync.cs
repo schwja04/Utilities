@@ -6,7 +6,7 @@ using Utilities.Common.Data;
 
 namespace Utilities.Sqlite.Data
 {
-    public sealed class SqlDataReaderAsync : DataReaderAsync
+    internal sealed class SqlDataReaderAsync : DataReaderAsync
     {
         private readonly SqliteDataReader _reader;
 

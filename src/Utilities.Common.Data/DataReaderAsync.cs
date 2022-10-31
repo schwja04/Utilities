@@ -92,14 +92,22 @@ namespace Utilities.Common.Data
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
-            return Convert.Cast<T>(value);
+            return (T)System.Convert.ChangeType(value, typeof(T));
         }
 
         public virtual T? ToNullable<T>(string columnName) where T : struct =>
-            To<T?>(columnName, null);
+            ToNullable<T>(columnName, null);
 
-        public virtual T? ToNullable<T>(string columnName, T? defaultValue) where T : struct =>
-            To(columnName, defaultValue);
+        public virtual T? ToNullable<T>(string columnName, T? defaultValue) where T : struct
+        {
+            if (!ColumnExists(columnName)) return defaultValue;
+
+            object value = _reader[columnName];
+
+            if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
+
+            return (T)System.Convert.ChangeType(value, typeof(T));
+        }
 
         public virtual bool ColumnExists(string columnName)
         {

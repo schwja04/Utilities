@@ -1,64 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using Utilities.Common.Data.Abstractions;
 
 namespace Utilities.Common.Data
 {
-    public static class Convert
+    public sealed class Convert : IConvert
     {
-        private static DefaultValueHandlerDictionary _defaultValueHandlers;
+        private readonly DefaultValueHandlerDictionary _handlers;
 
-        public static ReadOnlyDictionary<Type, Func<object, object>> DefaultValueHandlers =>
-            _defaultValueHandlers?.DefaultValueHandlers;
-
-        public static void AddOrUpdateHandler(Type type, Func<object, object> handler)
+        public Convert()
         {
-            if (type is null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
-
-            if (handler is null)
-            {
-                throw new ArgumentNullException(nameof(handler));
-            }
-
-            InitializeHandlers();
-
-            _defaultValueHandlers.AddOrUpdate(type, handler);
+            _handlers = new();
         }
 
-        public static void AddOrUpdateHandlers(IEnumerable<KeyValuePair<Type, Func<object, object>>> handlers)
+        public Convert(IEnumerable<KeyValuePair<Type, Func<object, object>>> defaultValueHandlers)
         {
-            foreach (KeyValuePair<Type, Func<object, object>> handler in handlers)
-            {
-                AddOrUpdateHandler(handler.Key, handler.Value);
-            }
+            _handlers = new(defaultValueHandlers);
         }
 
-        public static T Cast<T>(object value)
+        public T Cast<T>(object value)
         {
-            InitializeHandlers();
-
             Type baseType = typeof(T);
-            Type underlyingType = Nullable.GetUnderlyingType(baseType);
+            Type underlyingType = Nullable.GetUnderlyingType(baseType); // baseType.Equals(typeof(Nullable<>))
             Type destinationType = underlyingType ?? baseType;
 
             object resultValue = value;
 
-            if (_defaultValueHandlers.TryGetValue(destinationType, out Func<object, object> handler))
+            if (_handlers.TryGetValue(destinationType, out Func<object, object> handler))
             {
                 resultValue = handler.Invoke(resultValue);
             }
 
-            return (resultValue is T || destinationType.IsEnum || (value is null && underlyingType is not null))
-                ? (T)resultValue
-                : (T)System.Convert.ChangeType(resultValue, destinationType);
-        }
-
-        private static void InitializeHandlers()
-        {
-            _defaultValueHandlers ??= new();
+            return resultValue is T 
+                || destinationType.IsEnum 
+                || (value is null && (underlyingType is not null || !baseType.IsValueType))
+                    ? (T)resultValue
+                    : (T)System.Convert.ChangeType(resultValue, destinationType);
         }
     }
 }
