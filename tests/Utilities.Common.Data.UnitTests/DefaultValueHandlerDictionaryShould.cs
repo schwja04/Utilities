@@ -122,6 +122,49 @@ namespace Utilities.Common.Data.UnitTests
             handlers.DefaultValueHandlers.Should().HaveCount(newHandlers.Count);
         }
 
-        // TODO: Finish out testing Clear and TryGetValue
+        [Fact]
+        public void Clear_ShouldEmptyOut_Dictionary()
+        {
+            // Arrange
+            var newHandlers = _fixture.CreateMany<KeyValuePair<Type, Func<object, object>>>();
+            DefaultValueHandlerDictionary handlers = new(newHandlers);
+
+            // Act && Assert
+            handlers.DefaultValueHandlers.Count.Should().BeGreaterThan(0);
+
+            handlers.Clear();
+
+            handlers.DefaultValueHandlers.Count.Should().Be(0);
+        }
+
+        [Fact]
+        public void TryGetValue_ShouldReturn_TrueAndFunc()
+        {
+            // Arrange
+            var newHandlers = _fixture.CreateMany<KeyValuePair<Type, Func<object, object>>>(count: 1).ToArray();
+            DefaultValueHandlerDictionary handlers = new(newHandlers);
+
+            // Act
+            bool found = handlers.TryGetValue(newHandlers[0].Key, out Func<object, object> actual);
+
+            // Assert
+            found.Should().BeTrue();
+            actual.Should().BeOfType<Func<object, object>>();
+        }
+
+        [Fact]
+        public void TryGetValue_ShouldReturn_FalseAndNull()
+        {
+            // Arrange
+            var key = _fixture.Create<Type>();
+            DefaultValueHandlerDictionary handlers = new();
+
+            // Act
+            bool found = handlers.TryGetValue(key, out Func<object, object> actual);
+
+            // Assert
+            found.Should().BeFalse();
+            actual.Should().BeNull();
+        }
     }
 }
