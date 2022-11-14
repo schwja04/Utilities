@@ -13,11 +13,7 @@ namespace Utilities.Sqlite.Data
         public SqlDataReaderAsync(SqliteDataReader reader)
             : base(reader)
         {
-            if (reader is null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-            _reader = reader;
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
 
         public override async Task<bool> IsDBNullAsync(int i)
