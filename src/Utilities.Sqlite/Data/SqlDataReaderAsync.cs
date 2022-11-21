@@ -6,18 +6,14 @@ using Utilities.Common.Data;
 
 namespace Utilities.Sqlite.Data
 {
-    public sealed class SqlDataReaderAsync : DataReaderAsync
+    internal sealed class SqlDataReaderAsync : DataReaderAsync
     {
         private readonly SqliteDataReader _reader;
 
         public SqlDataReaderAsync(SqliteDataReader reader)
             : base(reader)
         {
-            if (reader is null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-            _reader = reader;
+            _reader = reader ?? throw new ArgumentNullException(nameof(reader));
         }
 
         public override async Task<bool> IsDBNullAsync(int i)

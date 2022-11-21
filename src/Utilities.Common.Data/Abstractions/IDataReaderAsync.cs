@@ -1,8 +1,6 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data.Abstractions
 {

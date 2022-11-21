@@ -1,53 +1,100 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using System;
+using System.Collections.Generic;
+using Utilities.Common.Data;
 using Xunit;
 
 namespace Utilities.Common.Data.UnitTests
 {
     public class ConvertShould
     {
+        private readonly IFixture _fixture;
+
+        private readonly Convert _convert;
+
+        public ConvertShould()
+        {
+            _fixture = new Fixture();
+
+            _convert = new Convert();
+        }
+
         [Fact]
-        public void Cast_WhenObjectIsNull_Throw_ArgumentNullException()
+        public void Cast_ShouldConvertDecimalToInt()
         {
             // Arrange
-            var action = () => Convert.Cast<int>(null);
-
-            // Act && Assert
-            action.Should().Throw<ArgumentNullException>();
-        }
-
-        [Theory]
-        [InlineData("true", true)]
-        [InlineData("t", true)]
-        [InlineData("yes", true)]
-        [InlineData("y", true)]
-        [InlineData(1, true)]
-        [InlineData("false", false)]
-        [InlineData("f", false)]
-        [InlineData("no", false)]
-        [InlineData("n", false)]
-        [InlineData(0, false)]
-        public void Cast_ToBoolean_Theories(object obj, bool expected)
-        {
-            // Arrange && Act && Assert
-            Convert.Cast<bool>(obj).Should().Be(expected);
-        }
-
-        [Theory]
-        [InlineData("hello     ")]
-        [InlineData("     hello")]
-        [InlineData("     hello     ")]
-        public void Cast_ToString_Theories(string orig)
-        {
-            // Arrange
-            string expected = orig.Trim();
+            decimal orig = _fixture.Create<decimal>();
+            int expected = (int)System.Convert.ChangeType(orig, typeof(int));
 
             // Act
-            string actual = Convert.Cast<string>(orig);
+            var actual = _convert.Cast<int>(orig);
 
             // Assert
-            string.Equals(actual, expected, StringComparison.OrdinalIgnoreCase)
-                .Should().BeTrue();
+            actual.Should().BeOfType(typeof(int));
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Cast_ShouldConvertIntToNullableInt()
+        {
+            // Arrange
+            int orig = _fixture.Create<int>();
+            int? expected = (int?)orig;
+
+            // Act
+            var actual = _convert.Cast<int?>(orig);
+
+            // Assert
+            actual.Should().HaveValue();
+            actual.Should().NotBeNull();
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Cast_ShouldConvertValidOrdinalEnumValueToEnum()
+        {
+            // Arrange
+            int orig = 1;
+            var expected = (DateTimeKind)orig;
+
+            // Act
+            var actual = _convert.Cast<DateTimeKind>(orig);
+
+            // Assert
+            actual.Should().Be(expected);
+        }
+
+        [Fact]
+        public void Cast_ShouldConvertNullList()
+        {
+            // Arrange
+            List<int> orig = null;
+
+            // Act
+            var actual = _convert.Cast<List<int>>(orig);
+
+            // Assert
+            actual.Should().BeNull();
+        }
+
+        [Fact]
+        public void ConvertWithStringHandler_ShouldProcessString()
+        {
+            // Arrange
+            DefaultValueHandlerDictionary handlers = new();
+            handlers.AddOrUpdate(typeof(string), value => value.ToString().Trim());
+
+            Convert convert = new(handlers.DefaultValueHandlers);
+
+            string orig = "   hello world   ";
+            string excepted = orig.Trim();
+
+            // Act
+            var actual = convert.Cast<string>(orig);
+
+            // Assert
+            actual.Should().Be(excepted);
         }
     }
 }

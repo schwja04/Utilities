@@ -6,7 +6,7 @@ using Utilities.Common.Data;
 
 namespace Utilities.MySql.Data
 {
-    public sealed class SqlDataReaderAsync : DataReaderAsync
+    internal sealed class SqlDataReaderAsync : DataReaderAsync
     {
         private readonly MySqlDataReader _reader;
 

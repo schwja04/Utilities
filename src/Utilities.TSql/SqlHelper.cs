@@ -17,9 +17,13 @@ namespace Utilities.TSql
 {
     public sealed class SqlHelper : SqlHelper<TSqlParameter>
     {
-        static SqlHelper()
+        private readonly IConvert _convert;
+
+        public SqlHelper() : this(new Common.Data.Convert()) { }
+
+        public SqlHelper(IConvert convert)
         {
-            DEFAULT_COMMAND_TIMEOUT = 30;
+            _convert = convert ?? throw new ArgumentNullException(nameof(convert));
         }
 
         #region Both Synchronous and Asynchronous Method
@@ -312,10 +316,10 @@ namespace Utilities.TSql
             return tran.SqlClientTransaction;
         }
 
-        private static T CastScalar<T>(object obj) 
+        private T CastScalar<T>(object obj) 
             where T : struct
         {
-            return (obj is null ? default : Common.Data.Convert.Cast<T>(obj));
+            return (obj is null ? default : _convert.Cast<T>(obj));
         }
     }
 }

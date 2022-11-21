@@ -723,6 +723,34 @@ namespace Utilities.Common.Data.UnitTests
         }
 
         [Fact]
+        public void ToWithoutDefault_ShouldReturnInt_WhenColumnCanBeConvertedToInt()
+        {
+            // Arrange
+            var colName = _fixture.Create<string>();
+            var expectedDecimal = _fixture.Create<decimal>();
+            var expectedFloat = _fixture.Create<float>();
+            var expectedString = _fixture.Create<int>().ToString();
+
+            _mockDataReader.Setup(x => x.FieldCount).Returns(1);
+            _mockDataReader.Setup(x => x.GetName(It.IsAny<int>())).Returns(colName);
+
+            _mockDataReader.SetupSequence(x => x[It.IsAny<string>()])
+                .Returns(expectedDecimal)
+                .Returns(expectedFloat)
+                .Returns(expectedString);
+
+            // Act
+            var actualDecimal = _dataReaderAsync.To<int>(colName);
+            var actualFloat = _dataReaderAsync.To<int>(colName);
+            var actualString = _dataReaderAsync.To<int>(colName);
+
+            // Assert
+            actualDecimal.Should().Be((int)expectedDecimal);
+            actualFloat.Should().Be((int)expectedFloat);
+            actualString.Should().Be((int)System.Convert.ChangeType(expectedString, typeof(int)));
+        }
+
+        [Fact]
         public void ToNullableWithoutDefault_ShouldReturnDefault_WhenColumnDoesNotExist()
         {
             // Arrange

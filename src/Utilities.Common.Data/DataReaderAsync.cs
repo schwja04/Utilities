@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Data;
-using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using Utilities.Common.Data.Abstractions;
-using Utilities.Common.Data.Extensions;
 
 namespace Utilities.Common.Data
 {
@@ -94,14 +92,13 @@ namespace Utilities.Common.Data
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
-            return (T)value;
+            return (T)System.Convert.ChangeType(value, typeof(T));
         }
 
         public virtual T? ToNullable<T>(string columnName) where T : struct =>
             ToNullable<T>(columnName, null);
 
-        public virtual T? ToNullable<T>(string columnName, T? defaultValue)
-            where T : struct
+        public virtual T? ToNullable<T>(string columnName, T? defaultValue) where T : struct
         {
             if (!ColumnExists(columnName)) return defaultValue;
 
@@ -109,7 +106,7 @@ namespace Utilities.Common.Data
 
             if (value is null || ReferenceEquals(value, DBNull.Value)) return defaultValue;
 
-            return (T)value;
+            return (T)System.Convert.ChangeType(value, typeof(T));
         }
 
         public virtual bool ColumnExists(string columnName)
