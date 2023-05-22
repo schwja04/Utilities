@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using Utilities.Common.Data.Exceptions;
 
 namespace Utilities.Common.Data.Extensions
 {
@@ -7,18 +8,18 @@ namespace Utilities.Common.Data.Extensions
     {
         public static T To<T>(this IDataReader reader, string columnName)
         {
-            if (!ColumnExists(reader, columnName)) return GenericExtensions.GetDefaultValue<T>();
+            if (!ColumnExists(reader, columnName)) throw new ColumnNotFoundException($"Column `{columnName}` not found");
 
             object value = reader[columnName];
 
-            if (value is null || ReferenceEquals(value, DBNull.Value)) return GenericExtensions.GetDefaultValue<T>();
+            if (value is null || ReferenceEquals(value, DBNull.Value)) throw new ColumnNullException($"Column `{columnName}` is null");
 
             return (T)System.Convert.ChangeType(value, typeof(T));
         }
 
         public static T To<T>(this IDataReader reader, string columnName, T defaultValue)
         {
-            if (!ColumnExists(reader, columnName)) return defaultValue;
+            if (!ColumnExists(reader, columnName)) throw new ColumnNotFoundException($"Column `{columnName}` not found"); 
 
             object value = reader[columnName];
 
@@ -35,7 +36,7 @@ namespace Utilities.Common.Data.Extensions
         public static T? ToNullable<T>(this IDataReader reader, string columnName, T? defaultValue)
             where T : struct
         {
-            if (!ColumnExists(reader, columnName)) return defaultValue;
+            if (!ColumnExists(reader, columnName)) throw new ColumnNotFoundException($"Column `{columnName}` not found");
 
             object value = reader[columnName];
 

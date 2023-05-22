@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Utilities.Common.Data.Exceptions;
 using Utilities.Common.Data.Extensions;
 using Utilities.Common.Testing.Sql;
 using Xunit;
@@ -20,7 +21,7 @@ namespace Utilities.Common.Data.UnitTests.Extensions
         }
 
         [Fact]
-        public void To_ShouldTestConditions()
+        public void To_WithoutDefault_ShouldTestConditions()
         {
             // Arrange
             Person[] people = CreatePeople(1).ToArray();
@@ -33,19 +34,44 @@ namespace Utilities.Common.Data.UnitTests.Extensions
             reader.To<int>("age").Should().Be(people[0].Age);
             reader.To<string>("name").Should().Be(people[0].Name);
 
-            // defaults
-            reader.To<int>("does not exist").Should().Be(0);
-            reader.To<int>("does not exist", -1).Should().Be(-1);
-            reader.To<string>("does not exist").Should().Be(string.Empty);
-            reader.To<string>("does not exist", "happy birthday")
-                .Should().Be("happy birthday");
+            var act = () => reader.To<int>("does not exist");
+            act.Should().Throw<ColumnNotFoundException>();
 
             reader.Read().Should().BeFalse();
             reader.NextResult().Should().BeFalse();
         }
 
         [Fact]
-        public void ToNullable_ShouldTestConditions()
+        public void To_WithDefault_ShouldTestConditions()
+        {
+            // Arrange
+            var table = new[]
+            {
+                new
+                {
+                    NullableInt = (int?)null,
+                    StandardInt = 1,
+                }
+            };
+
+            IDataReader reader = TestDataHelper.ToDataReader(table);
+
+            // Act && Assert
+            reader.Read().Should().BeTrue();
+
+            // part of contract
+            reader.To<int>("NullableInt", -1).Should().Be(-1);
+            reader.To<int>("StandardInt", -1).Should().Be(1);
+
+            var act = () => reader.To<int>("does not exist");
+            act.Should().Throw<ColumnNotFoundException>();
+
+            reader.Read().Should().BeFalse();
+            reader.NextResult().Should().BeFalse();
+        }
+
+        [Fact]
+        public void ToNullable_WithoutDefault_ShouldTestConditions()
         {
             // Arrange
             var table = new[]
@@ -63,12 +89,38 @@ namespace Utilities.Common.Data.UnitTests.Extensions
             reader.Read().Should().BeTrue();
 
             reader.ToNullable<int>("StandardInt").Should().Be(1);
-            reader.ToNullable<int>("StandardInt", -1).Should().Be(1);
             reader.ToNullable<int>("NullableInt").Should().Be(null);
+
+            var act = () => reader.ToNullable<int>("does not exist");
+            act.Should().Throw<ColumnNotFoundException>();
+
+            reader.Read().Should().BeFalse();
+            reader.NextResult().Should().BeFalse();
+        }
+
+        [Fact]
+        public void ToNullable_WithDefault_ShouldTestConditions()
+        {
+            // Arrange
+            var table = new[]
+            {
+                new
+                {
+                    NullableInt = (int?)null,
+                    StandardInt = 1,
+                }
+            };
+
+            IDataReader reader = TestDataHelper.ToDataReader(table);
+
+            // Act && Assert
+            reader.Read().Should().BeTrue();
+
+            reader.ToNullable<int>("StandardInt", -1).Should().Be(1);
             reader.ToNullable<int>("NullableInt", -1).Should().Be(-1);
 
-            reader.ToNullable<int>("does not exist").Should().Be(null);
-            reader.ToNullable<int>("does not exist", -1).Should().Be(-1);
+            var act = () => reader.ToNullable<int>("does not exist", -1);
+            act.Should().Throw<ColumnNotFoundException>();
 
             reader.Read().Should().BeFalse();
             reader.NextResult().Should().BeFalse();
