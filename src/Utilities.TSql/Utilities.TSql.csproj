@@ -14,7 +14,7 @@
     <None Remove="Data\" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Utilities.Common.Sql\Utilities.Common.Sql.csproj" />
